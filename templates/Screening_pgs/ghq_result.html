@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+
+{% load crispy_forms_tags %} 
+
+<br>
+<h2> General Assessment Results</h2>
+<br>
+
+<div class="result">
+
+   <h3> {{message}} </h3>
+    <br> <br>
+    <h3> Test score: {{score}}</h3>
+    <br>
+
+    <h3> How the score is calculated?</h3>
+    <br> 
+    <p> In case you're interested in knowing how the score is calculated: </p>
+    <p>
+        each response option is assigned a score of 0, 1, 2, or 3. 
+        The score assigned to each option typically reflects the level of 
+        distress or impairment reported by the respondent. 
+        The specific scoring values may vary slightly depending on the 
+        scoring method used, but the most commonly used values are as follows:
+    </p>
+    <br> 
+    <p>
+        0 - Better than usual
+        1 - No more than usual
+        2 - Rather more than usual
+        3 - Much more than usual
+
+        For example, for question 1 ("Have you recently felt constantly under strain?"), if the respondent answers "Better than usual," they would be assigned a score of 0. If they answer "No more than usual," they would be assigned a score of 1. If they answer "Rather more than usual," they would be assigned a score of 2. And if they answer "Much more than usual," they would be assigned a score of 3.
+    </p>
+    <br>
+    <p>
+        The other 11 questions would be scored similarly, with each response receiving a score of 0, 1, 2, or 3. A total score is generated when all 12 items have been scored, and it can vary from 0 to 36. Higher scores indicate greater levels of psychological distress or disability.
+    </p>
+</div>
+
+<style>
+    .result {
+        padding: 20px;
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+
+    h3 {
+        font-size: 23px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+    h2 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+</style>
+
+
+{% endblock %}

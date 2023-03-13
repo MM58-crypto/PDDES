@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+<head>
+    <title>Expert System</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="expert-interface">
+        
+        <div>
+          <ul>
+            <li><a href="#diagnosis">Diagnosis</a></li>
+            <li><a href="#patient-history">Patient History</a></li>
+            <!-- For now -->
+            <!-- maybe add a minidescription for each link?-->
+            <li> <a href="{% url 'kb-interface' %}">Knowledge Base</a></li>
+          </ul>
+        </div>
+        <section id="diagnosis">
+          <h2>Diagnosis</h2>
+          <form>
+            <label for="patient-name">Patient Name:</label>
+            <input type="text" id="patient-name" name="patient-name">
+            <br>
+            <label for="diagnosis">Diagnosis:</label>
+            <select id="diagnosis" name="diagnosis">
+              <option value="">Select a disorder</option>
+              <option value="anxiety">Anxiety Disorder</option>
+              <option value="depression">Depression</option>
+              <option value="bipolar">Bipolar Disorder</option>
+            </select>
+            <br>
+            <label for="treatment-plan">Treatment Plan:</label>
+            <textarea id="treatment-plan" name="treatment-plan"></textarea>
+            <br>
+            <input type="submit" value="Submit">
+          </form>
+        </section>
+        <section id="patient-history">
+          <h2>Patient History</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Diagnosis</th>
+                <th>Treatment Plan</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>John Doe</td>
+                <td>Anxiety Disorder</td>
+                <td>Cognitive behavioral therapy and medication</td>
+                <td>01/01/2021</td>
+              </tr>
+              <tr>
+                <td>Jane Smith</td>
+                <td>Depression</td>
+                <td>Therapy and medication</td>
+                <td>01/15/2021</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      
+      
+  </body>
+<style>
+/* general styling */
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* navigation bar */
+.navigation {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.navigation ul {
+  display: flex;
+  justify-content: space-between;
+}
+
+.navigation li {
+  margin-right: 20px;
+}
+
+.navigation a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.navigation a:hover {
+  text-decoration: underline;
+}
+
+/* diagnosis form */
+#diagnosis {
+  padding: 20px;
+}
+
+.form-field {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+input[type="text"],
+select,
+textarea {
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 16px;
+}
+
+input[type="submit"] {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #444;
+}
+
+/* patient history table */
+#patient-history {
+  padding: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  text-align: left;
+  padding: 10px;
+}
+
+th {
+  background-color: #333;
+  color: #fff;
+}
+
+
+</style>
+{% endblock %}

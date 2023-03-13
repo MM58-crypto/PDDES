@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+
+{% load crispy_forms_tags %} 
+
+<h2> General screening  </h2>
+<br>
+<fieldset>
+
+  <p>
+    <b>Have you recently? </b> 
+  </p>
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="ghq12">
+        {{gen_questions.as_p}}
+
+    </div>
+    <div id="buttons-container">
+      <!--
+      <button type="button" id="back-button" disabled>Back</button>
+      <button type="button" id="next-button">Next</button> -->
+      
+      <button type="submit" id="submit-button">Submit</button>
+    </div>
+
+</form>
+
+</fieldset>
+
+<style>
+     body {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  }
+  
+  h2 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  fieldset {
+    border: 1px solid #ccc;
+    padding: 20px;
+  }
+  
+  #questions-container {
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    font-weight: bold;
+  }
+  
+  input[type="radio"] {
+    margin-right: 10px;
+  }
+  
+  #buttons-container {
+    text-align: right;
+    margin-top: 20px;
+  }
+  
+  #prev-button {
+    margin-right: 10px;
+  }
+  
+  button {
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0069d9;
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+</style>
+    
+</style>
+
+
+{% endblock %}

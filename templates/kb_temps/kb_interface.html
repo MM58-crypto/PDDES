@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% load bootstrap5 %}
+
+{% load static %}
+
+<head>
+   <!-- <link rel="stylesheet" href="{% static 'kb_style.css' %}"> -->
+</head>
+
+{% block content %}
+
+{% load crispy_forms_tags %} 
+<br>
+<h2><center>Knowledge Base Interface</center></h2>
+<div class="container py-5">
+   <!-- <form action="" method="POST" class="form1">
+        {% csrf_token %}
+        <h3>Symptoms</h3>
+        {{ symptoms_form|crispy }}
+        <br>
+        <button class="btn btn-primary" type="submit">Save</button>
+    </br>
+    </form> -->
+    <form action="" method="POST" class="form2">
+        {% csrf_token %}
+        <br>
+        <h3>Disorders</h3>
+        {{ diagnosis_form|crispy }}
+        <br>
+        <h4>Symptoms</h4>
+        {{ symptoms_form|crispy }}
+        <br>
+        <button class="btn btn-primary" type="submit">Save</button>
+    </br>
+    </form>
+    <br>
+    <!--
+    <form action="" method="POST" class="form3">
+        {% csrf_token %}
+        <h3>System rules </h3>
+        {{ system_rules|crispy }}
+        <br>
+        <button class="btn btn-primary" type="submit">Save</button>
+        -->
+    </br>
+    </form>
+
+</div>
+
+<style>
+    .container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+form {
+    margin-bottom: 30px;
+}
+
+h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+h4 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+button[type="submit"] {
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Add an event listener to each form to disable the submit button on submit
+    var forms = document.querySelectorAll('form');
+    forms.forEach(function(form) {
+        form.addEventListener('submit', function() {
+            var button = form.querySelector('button[type="submit"]');
+            button.disabled = true;
+            button.innerText = 'Saving...';
+        });
+    });
+});
+
+</script>
+
+{% endblock %}

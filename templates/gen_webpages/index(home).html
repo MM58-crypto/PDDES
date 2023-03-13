@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block content %}
+
+<div class="img"></div>
+<div class="center">
+    <div class="title">Web-based system to predict psychological disorders</div>
+    <div class="sub_title">Your psychological wellbeing is of great importance</div>
+    <br>
+    
+    <div class="btns">
+        <!--begin btn may be removed or changed later-->
+        <a href="accounts/login/">
+        <button>Login</button>
+        </a>
+        <a href="register">
+        <button>Sign Up</button>
+        </a>
+    </div>
+</div>
+
+<!-- find white logos to put above each text container-->
+<div class="section-container">
+    <section>
+        <div class="container reveal">
+          <h2>What the system provides</h2>
+          <br> <br>
+          <div class="text-container">
+            <div class="text-box">
+              <h3>Quick Results</h3>
+              <p>
+                A smooth and responsive system that provides quick diagnosis results
+              </p>
+            </div>
+            <div class="text-box">
+              <h3>Treatment Recommendations</h3>
+              <p>
+                Recommends treatment to patients or clients according to the disorder
+              </p>
+            </div>
+            <div class="text-box">
+              <h3>Descriptive info on condition </h3>
+              <p>
+                A brief and accurate description of the disorder after obtaining the results
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      
+      </section>
+</div>
+
+<script>
+    function reveal() {
+      var reveals = document.querySelectorAll(".reveal");
+
+      for (var i = 0; i < reveals.length; i++) {
+        var windowHeight = window.innerHeight;
+        var elementTop = reveals[i].getBoundingClientRect().top;
+        var elementVisible = 150;
+
+        if (elementTop < windowHeight - elementVisible) {
+          reveals[i].classList.add("active");
+        } else {
+          reveals[i].classList.remove("active");
+        }
+      }
+    }
+
+    window.addEventListener("scroll", reveal);
+
+</script>
+
+<style>
+* {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     
+}
+.section-container {
+
+    background-color: #101010;
+}
+
+section{
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+section:nth-child(1){
+  color: #e0ffff;
+  }
+
+
+
+section .container{
+  margin: 100px;
+}
+
+section h1{
+  font-size: 3rem;
+  margin: 20px;
+}
+
+section h2{
+  font-size: 40px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+section .text-container{
+   display: flex;
+   text-align: center;
+}
+
+section .text-container .text-box{
+  margin: 20px;
+  padding: 20px;
+  background: darkgrey;
+  border-radius: 25px;
+}
+
+section .text-container .text-box h3{
+  font-size: 30px;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 900px){
+  section h1{
+    font-size: 2rem;
+    text-align: center;
+  }
+  section .text-container{
+    flex-direction: column;
+  }
+}
+
+.reveal{
+  position: relative;
+  transform: translateY(150px);
+  opacity: 0;
+  transition: 1s all ease;
+}
+
+.reveal.active{
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.img{
+background: url('static/imgs/mind2.jpeg') no-repeat;
+height: 100vh;
+width: 100%;
+background-position: center;
+background-size: cover; 
+background-position: center;
+position: relative;
+}
+.img::before{
+content: '';
+position: absolute;
+height: 100%;
+width: 100%;
+background: rgba(0, 0, 0, 0.4);
+
+}
+.center {
+    position: absolute;
+    top:52%;
+    left:50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+   
+    padding: 0 20px;
+    text-align: center;
+}
+.center .title {
+    color: #fff;
+    font-size: 55px;
+    font-weight: 600;
+}
+.center .sub_title{
+    color:#fff;
+    font-size: 52px;
+    font-weight: 600;
+}
+.center .btns{
+    margin-top: 20px;
+
+}
+.center .btns button{
+    height: 55px;
+    width: 170px;
+    border-radius: 5px;
+    border: none;
+    margin: 0 10px;
+    border: 2px solid #fff;
+    font-size: 20px;
+    font-weight: 500;
+    padding: 0 10px;
+    cursor: pointer; 
+    outline: none;
+    transition: all 0.3s ease;
+}
+.center .btns button:first-child{
+    color:white;
+    background: none;
+}
+.center .btns button:first-child:hover{
+   background: #fff;
+   color:#000;
+   transform: scale(1.1);
+
+}
+</style>
+{% endblock %}
+

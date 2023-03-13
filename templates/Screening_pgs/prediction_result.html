@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<br> 
+
+
+<!-- Include the description of the disorder and add recommendations-->
+<!-- Add a container for the results -->
+<div class="results-container">
+
+    {% if social_anxiety %}
+      <h2 class="result-title">Results</h2>
+      <h3>You may have social anxiety.</h3>
+      <h3>Likelihood: {{likelihood}}</h3>
+      <p></p>
+      <h2 class="desc-title">Disorder Description</h2>
+      <p>{{sa_desc.disorder_desc}}</p>
+      <h2 class="recommendation-title">Recommendations</h2>
+      <p>{{sa_desc.recommendation}}</p>
+    {% endif %}
+  
+    {% if anxiety %}
+      <h2 class="result-title">Results</h2>
+      <h3>You may have generalized anxiety disorder.</h3>
+      <h3>Likelihood: {{likelihood}}</h3>
+      <p></p>
+      <h2 class="desc-title">Disorder Description</h2>
+      <p>{{aa_desc.disorder_desc}}</p>
+      <h2 class="recommendation-title">Recommendations</h2>
+      <p>{{aa_desc.recommendation}}</p>
+    {% endif %}
+  
+  </div>
+
+
+{% if ptsd %}
+
+<h2>Results</h2> <br>
+
+<h3>You may have post traumatic stress disorder .</h3>
+ <h3> Likelihood:   {{likelihood}}</h3>
+<p> </p>
+
+<br> <br>
+<h2> Disorder Description </h2>
+<p> {{ptsd_desc.disorder_desc}} </p>
+<br> <br>
+    <h2> Recommendations</h2> <br>
+    <p> {{ptsd_desc.recommendation}}</p>
+
+{% endif %}
+
+{% if ocd %}
+
+<h2>Results</h2> <br>
+
+<h3>You may have obsessive compulsive disorder .</h3> <br> 
+ <h3> Likelihood:   {{likelihood}}</h3>
+<p> </p>
+<br> <br>
+<h2> Disorder Description </h2>
+<p> {{ocd_desc.disorder_desc}}</p>
+<br> <br>
+    <h2> Recommendations</h2>
+<br>
+<p>{{ocd_desc.recommendation}}</p>
+{% endif %}
+
+
+
+{% if anti_social %}
+
+<h2>Results</h2> <br>
+
+<h3>You may have anti-social personality disorder .</h3>
+<br> <br> 
+
+ <h3> Likelihood:   {{likelihood}}</h3>
+<p> </p>
+
+
+<br> <br>
+<h2> Disorder Description </h2>
+<br>
+<p> {{anti_social_desc.disorder_desc}}</p>
+
+<br> <br>
+    <h2> Recommendations</h2><br>
+<p> {{anti_social_desc.recommendation}}</p>
+
+{% endif %}
+
+{% if depression %}
+
+<h2>Results</h2> <br>
+
+<h3>You may have depression .</h3>
+
+<br> <br> 
+
+ <h3> Likelihood:   {{likelihood}}</h3>
+<p> </p>
+
+<br> <br>
+<h2> Disorder Description </h2>
+
+<br>
+<p>{{depression_desc.disorder_desc}}</p>
+<br>
+    <h2> Recommendations</h2>
+    <br>
+    <p>{{depression_desc.recommendation}}</p>
+{% endif %}
+
+
+{% if bipolar %}
+
+<h2>Results</h2> <br>
+
+<h3>You may have bipolar disorder .</h3>
+
+<br> <br> 
+
+ <h3> Likelihood:   {{likelihood}}</h3>
+<p> </p>
+
+<br> <br>
+<h2> Disorder Description </h2>
+<p>{{bipolar_desc.disorder_desc}}</p>
+
+
+<br> <br>
+    <h2> Recommendations</h2>
+{% endif %}
+
+<style>
+    .results-container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.result-title {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.desc-title, .recommendation-title {
+  font-size: 24px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+</style>
+
+{% endblock %}
