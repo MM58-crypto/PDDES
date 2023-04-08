@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+{% load static %}
+
+<head>
+  <link rel="stylesheet" href="{% static 'css/disorders_style.css' %}">
+</head>
+
+
+{% load crispy_forms_tags %} 
+
+<br>
+
+<h2>  Anxiety Questions </h2>
+<br>
+<p> Please answer the questions honestly </p>
+<fieldset>
+  <form method="POST">
+
+    {% csrf_token %}
+    <div id="questions-container">
+      <br> 
+        {{ a_questions_form|crispy}}
+    </div>
+    <br>
+    <div id="buttons-container">
+      <!--
+      <button type="button" id="back-button" disabled>Back</button>
+      <button type="button" id="next-button">Next</button> -->
+      
+      <button type="submit" id="submit-button" >Submit</button>
+    </div>
+    
+  </form>
+ <br>
+  
+ <script>
+
+  var questions = document.getElementsByClassName('question-container');
+      var currentQuestion = 0;
+      var backButton = document.getElementById('back-button');
+      var nextButton = document.getElementById('next-button');
+      var submitButton = document.getElementById('submit-button');
+  
+      function showQuestion(index) {
+        for (var i = 0; i < questions.length; i++) {
+          questions[i].style.display = 'none';
+        }
+        questions[index].style.display = 'block';
+  
+        currentQuestion = index;
+  
+        if (currentQuestion === 0) {
+          backButton.disabled = true;
+        } else {
+          backButton.disabled = false;
+        }
+  
+        if (currentQuestion === questions.length - 1) {
+          nextButton.style.display = 'none';
+          submitButton.style.display = 'block';
+        } else {
+          nextButton.style.display = 'block';
+          submitButton.style.display = 'none';
+        }
+      }
+  
+      showQuestion(currentQuestion);
+  
+      backButton.addEventListener('click', function() {
+        showQuestion(currentQuestion - 1);
+      });
+  
+      nextButton.addEventListener('click', function() {
+        showQuestion(currentQuestion + 1);
+      });
+  
+   
+  </script>
+
+<style>
+
+  
+</style>
+
+{% endblock %}

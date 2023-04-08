@@ -1,5 +1,44 @@
 {% extends "base.html" %}
 
+
 {% block content %}
-    <h3>This is the about page of our site</h3>
+
+{% load static %}
+<br>
+  <head>
+    <link rel="stylesheet" href="{% static 'css/about.css'%}">
+  </head>
+    
+
+    <br>
+ <section class="about-site">
+  <div class="main">
+    <img class="img-fluid w-50 d-none d-sm-block" src="{% static 'imgs/undraw_programming_re_kg9v.svg'%}" alt="">
+    <div class="about-text">
+    
+      <h5>About PDDES </h5>
+      <p>
+        <!-- About the site itself -->
+        Greetings, welcome to PDDES (short for Psychological Disorders Diagnosis Expert System),
+        An online expert system for diagnosing/predicting psychological disorders. 
+        This online system was built using html, css, javascript and django. Since it is an expert system, it is composed of three main
+        components: an inference engine, a knowledge base and of course a user interface. Moreover, this system aims to assist those might be
+        suffering from psychological issues as well as experts in the domain of psychology/psychiatry to facilitate the diagnosis process.
+      
+        Not to mention, other than to help or atleast slightly
+        guide those who are struggling with psychological issues, this website serves as my final year project. 
+         
+       
+      </p>
+
+    </div>
+  </div>
+ </section>
+ <br>
+
+ <section class="about-me">
+  
+ </section>
+   
+
 {% endblock %}

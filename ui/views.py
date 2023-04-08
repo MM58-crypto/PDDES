@@ -17,7 +17,7 @@ from .decorators import unauthenticated_user, allowed_users
 
 def home_view(request):
 
-    return render(request, "gen_webpages/index(home).html")
+    return render(request, "gen_webpages/index-new.html")
 
 def about_view(request):
     return render(request, "gen_webpages/about.html")

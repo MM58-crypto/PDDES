@@ -14,24 +14,28 @@
 <br>
 <h2><center>Knowledge Base Interface</center></h2>
 <div class="container py-5">
-   <!-- <form action="" method="POST" class="form1">
-        {% csrf_token %}
-        <h3>Symptoms</h3>
-        {{ symptoms_form|crispy }}
-        <br>
-        <button class="btn btn-primary" type="submit">Save</button>
-    </br>
-    </form> -->
+   
     <form action="" method="POST" class="form2">
         {% csrf_token %}
         <br>
         <h3>Disorders</h3>
-        {{ diagnosis_form|crispy }}
+        <select id="disorder-select" name="disorder_name">
+            {% for disorder in disorders %}
+                <option value="{{ disorder.pk }}">{{ disorder.disorder_name }}</option>
+            {% endfor %}
+        </select>
+        {{ diagnosis_form |crispy }}
+       
         <br>
+
+       
+        <br>
+        
+        <!--
         <h4>Symptoms</h4>
         {{ symptoms_form|crispy }}
-        <br>
-        <button class="btn btn-primary" type="submit">Save</button>
+        <br> -->
+        <button class="btn btn-info" type="submit">Save</button>
     </br>
     </form>
     <br>
@@ -42,13 +46,14 @@
         {{ system_rules|crispy }}
         <br>
         <button class="btn btn-primary" type="submit">Save</button>
-        -->
+        
     </br>
-    </form>
+    </form> -->
 
 </div>
 
 <style>
+   
     .container {
     max-width: 800px;
     margin: 0 auto;
@@ -61,6 +66,7 @@ form {
 h3 {
     font-size: 24px;
     margin-bottom: 20px;
+    color: white;
 }
 
 h4 {
@@ -84,19 +90,27 @@ button[type="submit"] {
 
 </style>
 
+<!-- Using javascript/ajax to fetch data from database when user selects item from drop down menu-->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Add an event listener to each form to disable the submit button on submit
-    var forms = document.querySelectorAll('form');
-    forms.forEach(function(form) {
-        form.addEventListener('submit', function() {
-            var button = form.querySelector('button[type="submit"]');
-            button.disabled = true;
-            button.innerText = 'Saving...';
-        });
+    var select = document.getElementById('disorder-select');
+    select.addEventListener('change', function() {
+        var disorderId = this.value;
+        var url = '/get_disorder_info/?disorder_id=' + disorderId;
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+                document.getElementById('id_disorder_desc').value = data.disorder_desc;
+                document.getElementById('id_disorder_keywords').value = data.disorder_keywords;
+                document.getElementById('id_recommendation').value = data.recommendation;
+            }
+        };
+        xhr.open('GET', url);
+        xhr.send();
     });
-});
-
 </script>
 
+
+
+    
 {% endblock %}

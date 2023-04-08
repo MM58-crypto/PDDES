@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<head>
+  <title>PDDES</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+
+<section class="bg-dark text-light p-5 text-center text-sm-start">
+  <div class="container">
+    <div class="d-sm-flex align-items-center justify-content-between">
+      <div>
+        <h1>Expert system to diagnose <span class="text-warning"> psychological disorders </span></h1>
+        <p class="lead my-4">
+          A web based system for diagnosing psychological disorders. 
+          Your psychological wellbeing is of great importance. 
+         
+        </p>
+      <!--  <button class="btn btn-primary btn-lg">Login</button> -->
+        <a href="register"><button class="btn btn-info btn-lg">Register</button></a>
+      </div>
+      <img class="img-fluid w-50 d-none d-sm-block" src="{% static 'imgs/mind2.jpeg'%}" alt="">
+    </div>
+  </div>
+</section>
+
+<br>
+
+
+<center><h3> What the system provides </h3></center>
+<!-- Feature Cards/boxes -->
+<section class="p-5">
+  <div class="container">
+    <div class="row text-center g-4">
+      <div class="col-md">
+        <div class="card bg-dark text-light">
+          <div class="card-body text-center">
+            <div class="h1 mb-3">
+              <i class="bi bi-lightning-charge-fill"></i>
+            </div>
+            <h3 class="card-title mb-3"> Quick Results</h3>
+            <p class="card-text">
+              A smooth and responsive system that provides quick diagnosis results
+            </p>
+           <!--  <a href="#" class="btn btn-dark">Read More</a> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="card bg-secondary text-light">
+          <div class="card-body text-center">
+            <div class="h1 mb-3">
+              <i class="bi bi-prescription2"></i>
+            </div>
+            <h3 class="card-title mb-3">Recommendations</h3>
+            <p class="card-text">
+              Recommends treatment to patients or clients according to the disorder
+            </p>
+          <!--  <a href="#" class="btn btn-dark">Read More</a> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-md">
+        <div class="card bg-dark text-light">
+          <div class="card-body text-center">
+            <div class="h1 mb-3">
+              <i class="bi bi-check-square-fill"></i>
+            </div>
+            <h3 class="card-title mb-3">Descriptive info </h3>
+            <p class="card-text">
+              A brief and accurate description of the disorder after obtaining the results
+            </p>
+            <!--  <a href="#" class="btn btn-dark">Read More</a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!--
+<br> <br> 
+<div class="sections">
+  <h2><center>What the system provides</center></h2>
+  <br> <br> 
+  <section class="hidden">
+    <div class="text-container">
+      <center><i class="fa fa-bolt fa-3x" aria-hidden="true"></i></center>
+      <br>
+      <center><h3> Quick Results </h3></center>
+      <p>  A smooth and responsive system that provides quick diagnosis results </p>
+    </div>
+      
+  </section>
+
+  <section class="hidden">
+    <div class="text-container">
+      <center><i class="fa fa-medkit fa-3x" aria-hidden="true"></i>
+       
+      </center>
+      <br> 
+      <center><h3> Treatment Recommendations </h3></center>
+      <p>  Recommends treatment to patients or clients according to the disorder </p>
+    </div>
+    
+  </section>
+  
+  <section class="hidden">
+    <div class="text-container">
+      <center><i class="fa fa-check-square fa-3x" aria-hidden="true"></i> </center>
+      <br>
+      <center><h3> Descriptive info on condition  </h3></center>
+      <p> A brief and accurate description of the disorder after obtaining the results collected
+        from reliable sources such as DSM, WebMd and NHS </p>
+    </div>
+    
+  </section>
+</div> 
+-->
+
+
+<footer>
+  <div class="footer-content">
+    <h3>
+      PDDES 
+    </h3>
+    <p>
+      This is the footer of our site!
+    </p>
+    <ul class="communications">
+      <li>
+        <a href="#"><i class="fa fa-telegram"></i></a>
+      </li>
+      <li>
+        <a href="https://github.com/MM58-crypto"><i class="fa fa-github"></i></a>
+      </li>
+      <li>
+        <a href="#"><i class="fa fa-linkedin-square"></i></a>
+      </li>
+      
+    </ul>
+  </div>
+  
+  <div class="footer-bottom">
+    <p class="lead">copyright &copy;2023 PDDES. </p>
+    
+   
+  </div>
+</footer> 
+
+<script defer src="{% static 'js_files/index.js' %}"> </script>
+
+<style>
+  .img{
+background: url('static/imgs/mind2.jpeg') no-repeat;
+height: 100vh;
+width: 100%;
+background-position: center;
+background-size: cover; 
+background-position: center;
+position: relative;
+}
+.img::before{
+content: '';
+position: absolute;
+height: 100%;
+width: 100%;
+background: rgba(0, 0, 0, 0.4);
+
+}
+
+</style>
+{% endblock %}
+

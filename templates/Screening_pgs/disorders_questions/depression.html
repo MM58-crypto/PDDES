@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+
+
+
+{% block content %}
+
+{% load static %}
+
+<head>
+  <link rel="stylesheet" href="{% static 'css/disorders_style.css' %}">
+</head>
+{% load crispy_forms_tags %} 
+
+<br>
+
+<h2> Depression Questions </h2>
+<br>
+<p style="color:white;"> Please answer the questions honestly </p>
+<fieldset>
+  <form method="POST">
+
+    {% csrf_token %}
+    <div id="questions-container">
+      <br> 
+        {{ depression_questions_form|crispy}}
+    </div>
+    <br>
+    <div id="buttons-container">
+      <!--
+      <button type="button" id="back-button" disabled>Back</button>
+      <button type="button" id="next-button">Next</button> -->
+      
+      <button type="submit" id="submit-button" >Submit</button>
+    </div>
+    
+  </form>
+ <br>
+  
+  
+</fieldset>
+
+
+{% endblock %}

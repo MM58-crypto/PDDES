@@ -2,175 +2,162 @@
 
 {% block content %}
 
+{% load static %}
 
 
 <head>
     <title>Expert System</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{% static 'css/expert_ui.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
   </head>
   <body>
+    <br>
+    <h1 style="color:white"><center>Expert User Interface <i class="fa fa-user-md" aria-hidden="true"></i></center></h1> 
     <div class="expert-interface">
-        
+        <br>
+
         <div>
-          <ul>
-            <li><a href="#diagnosis">Diagnosis</a></li>
-            <li><a href="#patient-history">Patient History</a></li>
-            <!-- For now -->
-            <!-- maybe add a minidescription for each link?-->
-            <li> <a href="{% url 'kb-interface' %}">Knowledge Base</a></li>
-          </ul>
+
+        
         </div>
-        <section id="diagnosis">
-          <h2>Diagnosis</h2>
-          <form>
-            <label for="patient-name">Patient Name:</label>
-            <input type="text" id="patient-name" name="patient-name">
-            <br>
-            <label for="diagnosis">Diagnosis:</label>
-            <select id="diagnosis" name="diagnosis">
-              <option value="">Select a disorder</option>
-              <option value="anxiety">Anxiety Disorder</option>
-              <option value="depression">Depression</option>
-              <option value="bipolar">Bipolar Disorder</option>
-            </select>
-            <br>
-            <label for="treatment-plan">Treatment Plan:</label>
-            <textarea id="treatment-plan" name="treatment-plan"></textarea>
-            <br>
-            <input type="submit" value="Submit">
-          </form>
+        <br>
+        
+        <section class="knowledge_base">
+          <h2> Knowledge Base Interface <i class="bi bi-database-fill"></i></i> </h2>
+          <p style="color:white">
+            The knowledge base is where data used by the expert system is stored. In the case of this system,
+            the knowlege base stores data about psychological disorders such as description, recommendation, disorder name & symptoms.
+            Furthermore, the knowledge base interface is where an expert can manipulate the knowledge base by updating info on the 
+            existing disorders.  
+          </p>
+          <br>
+          <p style="color:white">
+            Click on the button below to access the knowledge base interface 
+
+          </p>\
+          <br>
+          <a href="{% url 'kb-interface' 1 %}"><button type="button" class="btn btn-info">Knowledge Base UI</button></a>
         </section>
-        <section id="patient-history">
-          <h2>Patient History</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Patient Name</th>
-                <th>Diagnosis</th>
-                <th>Treatment Plan</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>John Doe</td>
-                <td>Anxiety Disorder</td>
-                <td>Cognitive behavioral therapy and medication</td>
-                <td>01/01/2021</td>
-              </tr>
-              <tr>
-                <td>Jane Smith</td>
-                <td>Depression</td>
-                <td>Therapy and medication</td>
-                <td>01/15/2021</td>
-              </tr>
-            </tbody>
-          </table>
+<br>
+        <section id="disorder_tests">
+          <h2> Disorder Tests <i class="bi bi-clipboard2-pulse"></i> </h2>
+          <p style="color:white">
+            Below are all the tests avaiable in the system. If you have an idea what your patient
+            or client is suffering from you select from the tests below. All the questions and diagnosis criteria
+            were based on the information provided by the DSM (Diagnostic and Statistical Manual of Mental Disorders).
+
+          </p>
+          <br>
+          <p style="color:white">
+            (This system offers assessments only for Social Anxiety, Generalized Anxiety Disorder, Bipolar, PTSD, OCD, Anti social and Depression.)
+          </p>
+          <br>
+          <!-- maybe add pictures later-->
+          <div class="social_anxiety" >
+            <h3> Social Anxiety</h3>
+            <p> 
+                 
+            </p>
+
+            <center><a href="/sa_anxiety_test"> <button class="begin-button">Begin</button></a></center>
+          </div>
+
+          <br>
+          <div class="general_anxiety">
+            <h3> Generalized Anxiety Disorder</h3>
+            <p> 
+                   
+            </p>
+
+           <center><a href="/anxiety_test"> <button class="begin-button">Begin</button></a></center> 
+          </div>
+
+          <br>
+          <div class="depression">
+            <h3> Depression </h3>
+            <p> 
+                  
+            </p>
+            <br>
+            <center><a href="/depression_test"> <button class="begin-button">Begin</button></a></center>
+          </div>
+
+          <br>
+          <div class="ocd">
+            <h3> Obsessive Compulsive Disorder </h3>
+            <p> 
+                 
+            </p>
+            <br>
+            <center><a href="/ocd_test"> <button class="begin-button">Begin</button></a></center>
+          </div>
+
+          <br>
+
+          <div class="ptsd">
+            <h3> Post Traumatic Stress Disorder</h3>
+            <p> 
+                  
+            </p>
+
+           <center><a href="/ptsd_test"> <button class="begin-button">Begin</button></a></center> 
+          </div>
+          <br>
+
+          <div class="anti-social">
+
+            <h3> Anti Social Personality Disorder</h3>
+            <p> 
+                   
+            </p>
+
+           <center><a href="/antisocial_test"> <button class="begin-button">Begin</button></a></center> 
+          </div>
+
+          <br>
+          <div class="bipolar">
+            <h3> Bipolar Disorder </h3>
+            <p> 
+                
+            </p>
+            <!-- add the bipolar questions asap -->
+           <center><a href="/"> <button class="begin-button">Begin</button></a></center>
+          </div>
+          
+          <br>
         </section>
       
+        <footer>
+          <div class="footer-content">
+            <h3>
+              PDDES 
+            </h3>
+            <p>
+              This is the footer of our site!
+            </p>
+            <ul class="communications">
+              <li>
+                <a href="#"><i class="fa fa-telegram"></i></a>
+              </li>
+              <li>
+                <a href="https://github.com/MM58-crypto"><i class="fa fa-github"></i></a>
+              </li>
+              <li>
+                <a href="#"><i class="fa fa-linkedin-square"></i></a>
+              </li>
+              
+            </ul>
+          </div>
+          
+          <div class="footer-bottom">
+            <p class="lead">copyright &copy;2023 PDDES. </p>
+            
+           
+          </div>
+        </footer> 
       
   </body>
-<style>
-/* general styling */
-body {
-  margin: 0;
-  font-family: sans-serif;
-}
 
-ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-/* navigation bar */
-.navigation {
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1;
-}
-
-.navigation ul {
-  display: flex;
-  justify-content: space-between;
-}
-
-.navigation li {
-  margin-right: 20px;
-}
-
-.navigation a {
-  color: #fff;
-  text-decoration: none;
-  font-size: 18px;
-}
-
-.navigation a:hover {
-  text-decoration: underline;
-}
-
-/* diagnosis form */
-#diagnosis {
-  padding: 20px;
-}
-
-.form-field {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  margin-bottom: 10px;
-  font-size: 18px;
-}
-
-input[type="text"],
-select,
-textarea {
-  border: 1px solid #ccc;
-  padding: 10px;
-  font-size: 16px;
-}
-
-input[type="submit"] {
-  background-color: #333;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  font-size: 18px;
-  cursor: pointer;
-}
-
-input[type="submit"]:hover {
-  background-color: #444;
-}
-
-/* patient history table */
-#patient-history {
-  padding: 20px;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th,
-td {
-  border: 1px solid #ccc;
-  text-align: left;
-  padding: 10px;
-}
-
-th {
-  background-color: #333;
-  color: #fff;
-}
-
-
-</style>
 {% endblock %}

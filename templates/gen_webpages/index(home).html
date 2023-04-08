@@ -1,11 +1,18 @@
 {% extends "base.html" %}
 
 {% load static %}
-{% block content %}
 
+{% block content %}
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
 <div class="img"></div>
 <div class="center">
     <div class="title">Web-based system to predict psychological disorders</div>
+    <br>
     <div class="sub_title">Your psychological wellbeing is of great importance</div>
     <br>
     
@@ -21,7 +28,46 @@
 </div>
 
 <!-- find white logos to put above each text container-->
-<div class="section-container">
+
+<br> <br> 
+<div class="sections">
+  <h2><center>What the system provides</center></h2>
+  <br> <br> 
+  <section class="hidden">
+    <div class="text-container">
+      <center><i class="fa fa-bolt fa-3x" aria-hidden="true"></i></center>
+      <br>
+      <center><h3> Quick Results </h3></center>
+      <p>  A smooth and responsive system that provides quick diagnosis results </p>
+    </div>
+      
+  </section>
+
+  <section class="hidden">
+    <div class="text-container">
+      <center><i class="fa fa-medkit fa-3x" aria-hidden="true"></i>
+       
+      </center>
+      <br> 
+      <center><h3> Treatment Recommendations </h3></center>
+      <p>  Recommends treatment to patients or clients according to the disorder </p>
+    </div>
+    
+  </section>
+  
+  <section class="hidden">
+    <div class="text-container">
+      <center><i class="fa fa-check-square fa-3x" aria-hidden="true"></i> </center>
+      <br>
+      <center><h3> Descriptive info on condition  </h3></center>
+      <p> A brief and accurate description of the disorder after obtaining the results collected
+        from reliable sources such as DSM, WebMd and NHS </p>
+    </div>
+    
+  </section>
+</div> 
+
+<!--<div class="section-container">
     <section>
         <div class="container reveal">
           <h2>What the system provides</h2>
@@ -51,111 +97,38 @@
       
       
       </section>
-</div>
+</div> -->
 
-<script>
-    function reveal() {
-      var reveals = document.querySelectorAll(".reveal");
+<footer>
+  <div class="footer-content">
+    <h3>
+      PDDES 
+    </h3>
+    <p>
+      This is the footer of our site!
+    </p>
+    <ul class="communications">
+      <li>
+        <a href="#"><i class="fa fa-telegram"></i></a>
+      </li>
+      <li>
+        <a href="https://github.com/MM58-crypto"><i class="fa fa-github"></i></a>
+      </li>
+      <li>
+        <a href="#"><i class="fa fa-linkedin-square"></i></a>
+      </li>
+      
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <p>copyright &copy;2023 PDDES. </p>
+  </div>
+</footer> 
 
-      for (var i = 0; i < reveals.length; i++) {
-        var windowHeight = window.innerHeight;
-        var elementTop = reveals[i].getBoundingClientRect().top;
-        var elementVisible = 150;
-
-        if (elementTop < windowHeight - elementVisible) {
-          reveals[i].classList.add("active");
-        } else {
-          reveals[i].classList.remove("active");
-        }
-      }
-    }
-
-    window.addEventListener("scroll", reveal);
-
-</script>
+<script defer src="{% static 'js_files/index.js' %}"> </script>
 
 <style>
-* {
-     margin: 0;
-     padding: 0;
-     box-sizing: border-box;
-     
-}
-.section-container {
-
-    background-color: #101010;
-}
-
-section{
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-section:nth-child(1){
-  color: #e0ffff;
-  }
-
-
-
-section .container{
-  margin: 100px;
-}
-
-section h1{
-  font-size: 3rem;
-  margin: 20px;
-}
-
-section h2{
-  font-size: 40px;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-section .text-container{
-   display: flex;
-   text-align: center;
-}
-
-section .text-container .text-box{
-  margin: 20px;
-  padding: 20px;
-  background: darkgrey;
-  border-radius: 25px;
-}
-
-section .text-container .text-box h3{
-  font-size: 30px;
-  text-align: center;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-@media (max-width: 900px){
-  section h1{
-    font-size: 2rem;
-    text-align: center;
-  }
-  section .text-container{
-    flex-direction: column;
-  }
-}
-
-.reveal{
-  position: relative;
-  transform: translateY(150px);
-  opacity: 0;
-  transition: 1s all ease;
-}
-
-.reveal.active{
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.img{
+  .img{
 background: url('static/imgs/mind2.jpeg') no-repeat;
 height: 100vh;
 width: 100%;
@@ -172,54 +145,7 @@ width: 100%;
 background: rgba(0, 0, 0, 0.4);
 
 }
-.center {
-    position: absolute;
-    top:52%;
-    left:50%;
-    width: 100%;
-    transform: translate(-50%, -50%);
-   
-    padding: 0 20px;
-    text-align: center;
-}
-.center .title {
-    color: #fff;
-    font-size: 55px;
-    font-weight: 600;
-}
-.center .sub_title{
-    color:#fff;
-    font-size: 52px;
-    font-weight: 600;
-}
-.center .btns{
-    margin-top: 20px;
 
-}
-.center .btns button{
-    height: 55px;
-    width: 170px;
-    border-radius: 5px;
-    border: none;
-    margin: 0 10px;
-    border: 2px solid #fff;
-    font-size: 20px;
-    font-weight: 500;
-    padding: 0 10px;
-    cursor: pointer; 
-    outline: none;
-    transition: all 0.3s ease;
-}
-.center .btns button:first-child{
-    color:white;
-    background: none;
-}
-.center .btns button:first-child:hover{
-   background: #fff;
-   color:#000;
-   transform: scale(1.1);
-
-}
 </style>
 {% endblock %}
 

@@ -1,0 +1,135 @@
+
+body {
+    margin: 0;
+    font-family: sans-serif;
+  
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+ a {
+  text-decoration: none;
+ }
+  /* navigation bar */
+  .navigation {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+  }
+  .depression, .social_anxiety, .general_anxiety, .ocd, .bipolar, .anti-social, .ptsd {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    color:white;
+   
+  }
+  .disorder_tests {
+    color:white;
+    
+  }
+  h3 {
+    text-align: center;
+    color: white;
+  }
+ 
+  .begin-button {
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4400ff;
+    color: #fff;
+    cursor: pointer;
+    align-items: center;
+  }
+  
+  .begin-button:hover {
+    background-color: #0069d9;
+  }
+  
+  .navigation ul {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .navigation li {
+    margin-right: 20px;
+  }
+  
+  .navigation a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+  }
+  
+  .navigation a:hover {
+    text-decoration: underline;
+  }
+  
+ 
+ 
+  
+  .form-field {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: white;
+  }
+
+  input[type="text"],
+  select,
+  textarea {
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  input[type="submit"] {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #444;
+  }
+  
+  /* patient history table */
+  #patient-history {
+    padding: 20px;
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th,
+  td {
+    border: 1px solid #ccc;
+    text-align: left;
+    padding: 10px;
+    color:white;
+  }
+  
+  th {
+    background-color: #333;
+    color: #fff;
+  }
+  

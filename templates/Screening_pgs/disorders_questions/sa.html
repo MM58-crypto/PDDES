@@ -1,42 +1,48 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+
+
 
 
 {% block content %}
 
+{% load static %}
 
+<head>
+  <link rel="stylesheet" href="{% static 'css/disorders_style.css' %}">
+</head>
 
 {% load crispy_forms_tags %} 
 
-<h2> General screening  </h2>
 <br>
+
+<h2> Social Anxiety Questions </h2>
+<br>
+<p> Please answer the questions honestly </p>
 <fieldset>
-
-  <p>
-    
-  </p>
   <form method="POST">
+
     {% csrf_token %}
-
-    <div class="ghq12">
-        {{gen_questions.as_p}}
-
+    <div id="questions-container">
+      <br> 
+        {{ sa_questions_form|crispy}}
     </div>
+    <br>
     <div id="buttons-container">
       <!--
       <button type="button" id="back-button" disabled>Back</button>
       <button type="button" id="next-button">Next</button> -->
       
-      <button type="submit" id="submit-button" data-bs-target="#reg-modal">Submit</button>
+      <button type="submit" id="submit-button" >Submit</button>
     </div>
-
+    
+  </form>
+ <br>
   
-
-</form>
-
+  
 </fieldset>
 
 <style>
-     body {
+  body {
     font-family: Arial, sans-serif;
     font-size: 16px;
   }
@@ -96,8 +102,5 @@
   }
   
 </style>
-    
-</style>
-
 
 {% endblock %}

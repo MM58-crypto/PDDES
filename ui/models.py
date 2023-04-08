@@ -9,7 +9,6 @@ from django.contrib import admin
 
 class Question(models.Model):
 
-    question_num = models.IntegerField(default=1)
     question_text = models.TextField()
     
     # add a field for the choices
@@ -19,6 +18,7 @@ class Question(models.Model):
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
+   
 
     def __str__(self):
         return self.choice_text

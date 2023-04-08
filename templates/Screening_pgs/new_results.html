@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<br>
+<head>
+  <script>
+   const myModal = new boostrap.Modal('#gps-modal');
+   
+   window.addEventListener('DOMContentLoaded', () => {
+    myModal.show();
+   });
+
+
+  </script>
+</head>
+<center><h2> Test Results <i class="bi bi-file-check-fill"></i> </h2></center>
+<br>
+<!-- (loop) if first five questions are displayed, display info related to social anxiety-->
+
+
+<div class="results-container">
+  
+    {% if score >= 10 %}
+      <div class="likelihood_score">
+
+     
+        <h3> The results show that you are most probably suffering from {{description.disorder_name}}, 
+        </h3>
+        <br>
+        <h3> Likelihood: {{likelihood}}</h3>
+        <br>
+        <!--Would you like to allow the system to display nearby clinics on a map?-->
+       
+        <div class="modal" tabindex="-1" role="dialog" id="gps-modal">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">GPS access toggle </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p id="modal-p">Would you like to allow the system to display nearby clinics on a map?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="allow-btn">Allow</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Deny</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <script>
+          const dialog = document.getElementById('gps-modal');
+          const allowBtn = document.getElementById('allow-btn');
+          const denyBtn = document.querySelector('.modal-footer .btn-danger');
+        
+          function showMapDialog() {
+            dialog.style.display = 'block';
+          }
+        
+          function hideMapDialog() {
+            dialog.style.display = 'none';
+          }
+        
+          function allowMap() {
+            navigator.geolocation.getCurrentPosition((position) => {
+              const latitude = position.coords.latitude;
+              const longitude = position.coords.longitude;
+              const searchTerm = "Mental Clinics";
+              const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchTerm)}&center=${latitude},${longitude}&zoom=15`;
+              //const mapUrl = `https://www.google.com/maps/@${latitude},${longitude},15z`;
+              window.open(mapUrl, '_blank');
+            });
+            hideMapDialog();
+          }
+        
+          function denyMap() {
+            hideMapDialog();
+          }
+        
+          allowBtn.addEventListener('click', allowMap);
+          denyBtn.addEventListener('click', denyMap);
+        </script>
+ <script>
+    showMapDialog();
+ </script>
+        <h3> Score: {{score}}</h3>
+      </div>
+        <br>
+       <div class="desc">
+        <h3>Description: <i class="bi bi-info-circle-fill"></i> </h3>
+        <br>
+        <p> {{description.disorder_desc}}</p>
+      </div>
+        <br> 
+        <div class="recommend">
+        <h3>Recommendation <i class="bi bi-check-circle-fill"></i> </h3>
+        <br>
+        <p> {{description.recommendation}}</p>
+      </div>
+
+    {% elif score >= 5 %}
+      <div class="likelihood_score">
+        <h3> The results show that it is possible that you are suffering from {{description.disorder_name}}, your case is not severe
+        </h3>
+        <br>
+        <h3> Likelihood: {{likelihood}}</h3>
+        <h3> Score: {{score}}</h3>
+      </div>
+      <br>
+
+        <div class="desc">
+          <h3>Description: <i class="bi bi-info-circle-fill"></i> </h3>
+          <br>
+          <p> {{description.disorder_desc}}</p>
+        </div>
+      
+        <br>
+        <div class="recommend">
+          <h3>Recommendation </h3>
+          <br>
+          <p> {{description.recommendation}}</p>
+        </div> 
+       
+    {% else %}
+    <h3> The results show that it is unlikely that you are suffering from {{description.disorder_name}} </h3>
+    <h3> Score: {{score}}</h3>
+        
+    {% endif %}
+    <br> 
+    
+        
+ 
+
+
+</div>
+<style>
+   h3, h2, h1, p   {
+    color:white;
+   }
+   #modal-p {
+    color:black;
+   }
+   .modal-content {
+    background:darkgray;
+   }
+    #dialog {
+        margin: auto;
+        width: 50%;
+        padding: 10px;
+        border: solid white  5px;
+    }
+    #allow-btn {
+      font-size: 16px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: #4400ff;
+      color: #fff;
+      cursor: pointer;
+      align-items: center;
+    }
+    #deny-btn {
+      font-size: 16px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      background-color: red;
+      color: #fff;
+      cursor: pointer;
+      align-items: center;
+    }
+    .likelihood_score, .desc, .recommend {
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+     /* background-color: ; */
+    }
+</style>
+
+
+
+
+{% endblock %}

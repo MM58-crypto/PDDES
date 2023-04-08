@@ -2,6 +2,20 @@
 
 
 {% block content %}
+<head>
+  <title>Prediction Results</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" integrity="sha512-GcyfP9ll8ik6W5OcQCukw6/ff1QIl5rZjYiAKA5l6FX5C9N4yM3fSAv4RRpGKxjx4S06HITRZY/WfmKjLEL31Q==" crossorigin="anonymous" referrerpolicy="no-referrer" /> <!-- Bootstrap CSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/js/bootstrap.min.js" integrity="sha512-09s7s+20YsTHf7/F0dSiXK1f3q4H+GNpLJjkrxNlS8Z/ud+oRjJZ6BoE2QikrqW6R9jjCY5J5PQjID7V4J4GEw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> <!-- Bootstrap JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" integrity="sha384-g6ISQ28dLlS6GQezbqJFAq5gM/QdM5mrb17F8/kCJpBPL+PBlkSYflW7R8tJpRZ+" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha384-WM1QTZBxjEIQsV7T8/dwLcV7ymDLeJe03kf7W8Lk/ET1QGGZHYHeBMGm7V8BwDJu" crossorigin=""></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
 
 <br> 
 
@@ -32,7 +46,7 @@
       <p>{{aa_desc.recommendation}}</p>
     {% endif %}
   
-  </div>
+ 
 
 
 {% if ptsd %}
@@ -53,11 +67,74 @@
 {% endif %}
 
 {% if ocd %}
-
+ 
 <h2>Results</h2> <br>
+
+
 
 <h3>You may have obsessive compulsive disorder .</h3> <br> 
  <h3> Likelihood:   {{likelihood}}</h3>
+ {% if likelihood == "Highly Likely"%}
+
+ <div id="dialog" style="display:none">
+  <p>Would you like to allow the system to display nearby clinics on a map?</p>
+  <button id="allow-btn">Allow</button>
+  <button id="deny-btn">Deny</button>
+ </div>
+  
+    <script>
+    const dialog = document.getElementById('dialog');
+    const allowBtn = document.getElementById('allow-btn');
+    const denyBtn = document.getElementById('deny-btn');
+
+    function showMapDialog() {
+      dialog.style.display = 'block';
+    }
+
+    function hideMapDialog() {
+      dialog.style.display = 'none';
+    }
+
+    function allowMap() {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const searchTerm = "Mental Clinics"
+        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchTerm)}&center=${latitude},${longitude}&zoom=15`;
+        //const mapUrl = `https://www.google.com/maps/@${latitude},${longitude},15z`;
+        window.open(mapUrl, '_blank');
+      });
+      hideMapDialog();
+    }
+
+    function denyMap() {
+      hideMapDialog();
+    }
+
+    allowBtn.addEventListener('click', allowMap);
+    denyBtn.addEventListener('click', denyMap);
+
+    </script>
+ <script>
+    showMapDialog();
+ </script>
+ <style>
+  button{
+    color:black;
+ 
+  }
+  #dialog{
+  display: flex;
+  justify-content: center; /* centers items horizontally */
+  align-items: center; /* centers items vertically */
+  height: 100%;
+  margin: auto;
+  width: 50%;
+  border: solid white ;
+}
+
+ </style>
+ {% endif %}
 <p> </p>
 <br> <br>
 <h2> Disorder Description </h2>
@@ -66,6 +143,9 @@
     <h2> Recommendations</h2>
 <br>
 <p>{{ocd_desc.recommendation}}</p>
+
+
+
 {% endif %}
 
 
@@ -134,12 +214,11 @@
 <br> <br>
     <h2> Recommendations</h2>
 {% endif %}
-
+</div>
 <style>
     .results-container {
   padding: 20px;
-  background-color: #f5f5f5;
-  border: 1px solid #ccc;
+ 
   border-radius: 5px;
   margin-top: 20px;
 }
@@ -154,6 +233,7 @@
   margin-top: 20px;
   margin-bottom: 10px;
 }
+
 </style>
 
 {% endblock %}

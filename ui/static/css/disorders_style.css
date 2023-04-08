@@ -1,42 +1,4 @@
-{% extends "base.html" %}
-
-
-{% block content %}
-
-
-
-{% load crispy_forms_tags %} 
-
-<h2> General screening  </h2>
-<br>
-<fieldset>
-
-  <p>
-    
-  </p>
-  <form method="POST">
-    {% csrf_token %}
-
-    <div class="ghq12">
-        {{gen_questions.as_p}}
-
-    </div>
-    <div id="buttons-container">
-      <!--
-      <button type="button" id="back-button" disabled>Back</button>
-      <button type="button" id="next-button">Next</button> -->
-      
-      <button type="submit" id="submit-button" data-bs-target="#reg-modal">Submit</button>
-    </div>
-
-  
-
-</form>
-
-</fieldset>
-
-<style>
-     body {
+body {
     font-family: Arial, sans-serif;
     font-size: 16px;
   }
@@ -59,13 +21,15 @@
     margin-bottom: 20px;
   }
   
-  label {
+  label, p {
     font-weight: bold;
+    color:white;
   }
   
   input[type="radio"] {
     margin-right: 10px;
   }
+
   
   #buttons-container {
     text-align: right;
@@ -94,10 +58,3 @@
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
-</style>
-    
-</style>
-
-
-{% endblock %}
