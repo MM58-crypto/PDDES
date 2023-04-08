@@ -18,8 +18,8 @@ from django.contrib.auth import views as auth_views
 
 from ui import views 
 
-from knowledge_base.views import disorder_info_view
-from inference_engine.views import d_test_view, results_view, ghq_view
+from knowledge_base.views import *
+from inference_engine.views import *
 from django.urls import path, include 
 
 
@@ -33,7 +33,15 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('test/',  d_test_view, name="test"),
     path('ghq/', ghq_view, name="ghq"),
-   
+    path('anxiety_test/', anxiety_page_view),
+    path('sa_anxiety_test/', socialanxiety_page_view),
+    path('depression_test/', depression_page_view),
+    path('ocd_test/', ocd_view),
+    path('antisocial_test/', antisocial_view),
+    path('ptsd_test/', ptsd_page_view),
+    #bipolar is left 
+    
+
 
     path('results/', results_view, name="results"),   
     path('accounts/login/', views.login_view, name="login"),
@@ -49,5 +57,6 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='password-related/complete_pw_reset.html'), name='password_reset_complete'),      
     #path("accounts/", include("django.contrib.auth.urls")),
     # kb stuff
-    path("kb-interface/", disorder_info_view, name="kb-interface"),
+    path("kb-interface/<int:id>", disorder_info_view, name="kb-interface"),
+    path('get_disorder_info/', get_disorder_info, name='get_disorder_info'),
 ]
