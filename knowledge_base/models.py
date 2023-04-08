@@ -21,12 +21,23 @@ PTSD, Depression, Obsessive-Compulsive, Schizophrenia,
 Anti-Social personality Disorder 
 (Schizophrenia might not be added to this list)
 """
+
+Disorder_choices = [
+    ('social_anxiety','Social anxiety'),
+    ('bipolar disorder','bipolar disorder'),
+    ('ptsd','PTSD'),
+    ('depression','Depression'),
+    ('obsessive_compulsive','Obsessive Compulsive'),
+    ('anti_social','Anti-Social personality disorder'),
+    ('anxiety','Anxiety'),
+    ('schizophrenia','Schizophrenia')
+]
 class Disorder_Diagnosis(models.Model):
 
     disorder_name = models.CharField(
         max_length=255,
-        #choices = Disorder_choices,
-        #default = 'social_anxiety'
+        choices = Disorder_choices,
+        default = 'social_anxiety'
     )
     #models.CharField(max_length=255)
     disorder_desc = models.TextField()
@@ -41,24 +52,15 @@ class Disorder_Diagnosis(models.Model):
         return self.disorder_name
         
 # db table containing rules of the expert system
-class System_rules(models.Model):
-    #rule_name = models.CharField(max_length=255)
-    rule_statement = models.TextField()
-    conclusion = models.ForeignKey(Disorder_Diagnosis, on_delete=models.CASCADE)
-   # symptom = models.ManyToManyField(Psych_D_symptoms)
-    class Meta:
-        verbose_name = "System rule"
+#class System_rules(models.Model):
+#    #rule_name = models.CharField(max_length=255)
+#    rule_statement = models.TextField()
+#    conclusion = models.ForeignKey(Disorder_Diagnosis, on_delete=models.CASCADE)
+#   # symptom = models.ManyToManyField(Psych_D_symptoms)
+#    class Meta:
+#        verbose_name = "System rule"
     
    
 
 
-#    Disorder_choices = [
-#    ('social_anxiety','Social anxiety'),
-#    ('bipolar disorder','bipolar disorder'),
-#    ('ptsd','PTSD'),
-#    ('depression','Depression'),
-#    ('obsessive_compulsive','Obsessive Compulsive'),
-#    ('anti_social','Anti-Social personality disorder'),
-#    ('anxiety','Anxiety'),
-#    #('schizophrenia','Schizophrenia')
-#]
+

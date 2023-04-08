@@ -1,8 +1,8 @@
 import rules 
-from ui.models import Question, Choice
+#from ui.models import Question, Choice
 
 """ 
-Current rules defined in the rules model : 
+Current rules defined in the rules model (obsolete rules): 
  1. IF Q1 == 'Frequently' AND Q2 == 'Yes' OR Q2 == 'Sometimes' AND Q3 == " Yes" AND Q4 == "Yes" AND Q5 == "Yes"
 THEN C1 ==  "Social Anxiety"
  2.  IF Q6 == 'True' AND Q7 == 'Yes' OR Q7 == 'Occasionally' AND Q8 == 'Yes' AND Q9 == 'Yes' AND Q10 == 'Agree'  AND Q11 == 'Always' OR Q11 =='Occasionally'
@@ -26,35 +26,49 @@ THEN C7 ==  "Bipolar disorder"
 # current issue: need a unique identifer to get exact field value
 def mm_rules_engine(user_input):
     questions = Question.objects.all()
-    if request.method == "POST":
-        form = QuestionForm(request.POST)
-        # this approach is not quite efficient and time consuming
-        # there must be an easier way to do this (maybe the score method)
-        if form.is_valid():
+    if form.is_valid():
             selected_choices = form.get_selected_choices()
             # social anxiety, highly likely
             if selected_choices.get('2') == '6' and selected_choices.get('3') =='7' and selected_choices.get('4') == '10' and selected_choices.get('5') == '13' and selected_choices.get('6') == '16':
                 sa_desc = Disorder_Diagnosis.objects.get(id=1)
-                likelihood = "very high"
+                likelihood = "Highly Likely"
+                disorders['social_anxiety'] = True
+                context = {'social_anxiety': disorders['social_anxiety'],
+                 'sa_desc':sa_desc, 'likelihood': likelihood
+                }
+                return render(request, "Screening_pgs/prediction_result.html", context)
+            # likely
+            elif selected_choices.get('2') == '5' and selected_choices.get('3') =='7' and (selected_choices.get('4') == '10' or selected_choices.get('4')=='12') and selected_choices.get('5') == '13' and selected_choices.get('6') == '17':
+                sa_desc = Disorder_Diagnosis.objects.get(id=1)
+                likelihood = "Likely"
                 disorders['social_anxiety'] = True
                 context = {'social_anxiety': disorders['social_anxiety'],
                  'sa_desc':sa_desc, 'likelihood': likelihood
                 }
                 return render(request, "Screening_pgs/prediction_result.html", context)
             # possible 
-            elif selected_choices.get('2') == '5' and selected_choices.get('3') =='9' and selected_choices.get('4') == '12' and selected_choices.get('5') == '15' and selected_choices.get('6') == '17':
+            elif selected_choices.get('2') == '5' and (selected_choices.get('3') =='9' or selected_choices.get('3') =='7') and selected_choices.get('4') == '12' and selected_choices.get('5') == '15' and selected_choices.get('6') == '17':
                 sa_desc = Disorder_Diagnosis.objects.get(id=1)
-                likelihood = "possible "
+                likelihood = "Possible "
                 disorders['social_anxiety'] = True
                 context = {'social_anxiety': disorders['social_anxiety'],
                  'sa_desc':sa_desc, 'likelihood': likelihood
                 }
                 return render(request, "Screening_pgs/prediction_result.html", context)
-            # unlikely 
-            elif selected_choices.get('2') == '4' and selected_choices.get('3') =='8' and selected_choices.get('4') == '11' and selected_choices.get('5') == '14' and selected_choices.get('6') == '17':
+            # unlikely # change it to false if its unlikely or highly unlikely
+            elif (selected_choices.get('2') == '4' or selected_choices.get('2')=='5') and (selected_choices.get('3') =='8' and selected_choices.get('3')=='9') and selected_choices.get('4') == '11' and (selected_choices.get('5') == '14' or selected_choices.get('5')=='15') and selected_choices.get('6') == '17':
                 sa_desc = Disorder_Diagnosis.objects.get(id=1)
-                likelihood = "unlikely "
-                disorders['social_anxiety'] = True
+                likelihood = "Unlikely"
+                disorders['social_anxiety'] = False
+                context = {'social_anxiety': disorders['social_anxiety'],
+                 'sa_desc':sa_desc, 'likelihood': likelihood
+                }
+                return render(request, "Screening_pgs/prediction_result.html", context)
+            # highly unlikely (sa)
+            elif selected_choices.get('2') == '4' and (selected_choices.get('3') =='8' or  selected_choices,get('3') == '9')and selected_choices.get('4') == '11' and selected_choices.get('5') == '14' and selected_choices.get('6') == '17':
+                sa_desc = Disorder_Diagnosis.objects.get(id=1)
+                likelihood = "Highly Unlikely"
+                disorders['social_anxiety'] = False
                 context = {'social_anxiety': disorders['social_anxiety'],
                  'sa_desc':sa_desc, 'likelihood': likelihood
                 }
@@ -69,6 +83,15 @@ def mm_rules_engine(user_input):
                  'aa_desc':aa_desc, 'likelihood': likelihood
                 }
                 return render(request, "Screening_pgs/prediction_result.html", context)
+            # likely 
+            elif selected_choices.get('7') == '18' and selected_choices.get('8') =='22'   and selected_choices.get('9') == '24' and selected_choices.get('10') == '27' and selected_choices.get('11') == '29'and selected_choices.get('12') == '31' or selected_choices.get('12') == '32':
+                aa_desc = Disorder_Diagnosis.objects.get(id=6)
+                likelihood = "possible"
+                disorders['anxiety'] = True
+                context = {'anxiety': disorders['anxiety'],
+                 'aa_desc':aa_desc, 'likelihood': likelihood
+                }
+                return render(request, "Screening_pgs/prediction_result.html", context)
             # possible 
             elif selected_choices.get('7') == '18' and selected_choices.get('8') =='22'   and selected_choices.get('9') == '24' and selected_choices.get('10') == '27' and selected_choices.get('11') == '29'and selected_choices.get('12') == '31' or selected_choices.get('12') == '32':
                 aa_desc = Disorder_Diagnosis.objects.get(id=6)
@@ -78,10 +101,19 @@ def mm_rules_engine(user_input):
                  'aa_desc':aa_desc, 'likelihood': likelihood
                 }
                 return render(request, "Screening_pgs/prediction_result.html", context)
-            # unlikely
+            # unlikely --
+            elif selected_choices.get('7') == '18' and selected_choices.get('8') =='22'   and selected_choices.get('9') == '24' and selected_choices.get('10') == '27' and selected_choices.get('11') == '29'and selected_choices.get('12') == '31' or selected_choices.get('12') == '32':
+                aa_desc = Disorder_Diagnosis.objects.get(id=6)
+                likelihood = "possible"
+                disorders['anxiety'] = True
+                context = {'anxiety': disorders['anxiety'],
+                 'aa_desc':aa_desc, 'likelihood': likelihood
+                }
+                return render(request, "Screening_pgs/prediction_result.html", context)
+            # highly unlikely
             elif selected_choices.get('7') == '18' and selected_choices.get('8') =='20' or selected_choices.get('8') =='22'  and selected_choices.get('9') == '23' and selected_choices.get('10') == '25' and selected_choices.get('11') == '28'and selected_choices.get('12') == '30' or selected_choices.get('12') == '31':
                 aa_desc = Disorder_Diagnosis.objects.get(id=6)
-                likelihood = "unlikely"
+                likelihood = "Highly Unlikely"
                 disorders['anxiety'] = True
                 context = {'anxiety': disorders['anxiety'],
                  'aa_desc':aa_desc, 'likelihood': likelihood
@@ -118,25 +150,46 @@ def mm_rules_engine(user_input):
             # ocd, highly likely 
             if selected_choices.get('21') == '53' and selected_choices.get('22') =='55' and selected_choices.get('23') == '57' and selected_choices.get('24') == '59' and selected_choices.get('25') == '61':
                 ocd_desc = Disorder_Diagnosis.objects.get(id=5)
-                likelihood = "very high"
+                likelihood = "Highly Likely"
+                disorders['ocd'] = True
+                context = {'ocd': disorders['ocd'], 'ocd_desc': ocd_desc,
+                'likelihood':likelihood, 
+                }
+                if likelihood == "Highly Likely":
+                    request.session['display_map'] = True
+                return render(request, "Screening_pgs/prediction_result.html", context)
+            # if condition highly likely, allow user to toggle (js) option to activate google map api
+            # likely
+            elif selected_choices.get('21') == '53' and selected_choices.get('22') =='55' and selected_choices.get('23') == '58' and selected_choices.get('24') == '60' and selected_choices.get('25') == '61':
+                ocd_desc = Disorder_Diagnosis.objects.get(id=5)
+                likelihood = "Likely"
                 disorders['ocd'] = True
                 context = {'ocd': disorders['ocd'], 'ocd_desc': ocd_desc,
                 'likelihood':likelihood, 
                 }
                 return render(request, "Screening_pgs/prediction_result.html", context)
-
+            
             # possible (ocd)
-            elif selected_choices.get('21') == '53' and selected_choices.get('22') =='55'   and selected_choices.get('23') == '57' and selected_choices.get('24') == '59' and selected_choices.get('25') == '61':
+            elif selected_choices.get('21') == '53' and selected_choices.get('22') =='56'   and selected_choices.get('23') == '57' and selected_choices.get('24') == '60' and selected_choices.get('25') == '62':
                 ocd_desc = Disorder_Diagnosis.objects.get(id=5)
-                likelihood = "possible"
+                likelihood = "Possible"
                 disorders['ocd'] = True
                 context = {'ocd': disorders['ocd'], 'ocd_desc': ocd_desc,
                 'likelihood':likelihood}
                 return render(request, "Screening_pgs/prediction_result.html", context) 
             # unlikely (ocd)
+            elif selected_choices.get('21') == '54' and selected_choices.get('22') =='56'   and selected_choices.get('23') == '57' and selected_choices.get('24') == '60' and selected_choices.get('25') == '61':
+                ocd_desc = Disorder_Diagnosis.objects.get(id=5)
+                likelihood = "Unlikely"
+                disorders['ocd'] = True
+                context = {'ocd': disorders['ocd'], 'ocd_desc': ocd_desc,
+                'likelihood':likelihood }
+                return render(request, "Screening_pgs/prediction_result.html", context) 
+            # highly unlikely 
+             # unlikely (ocd)
             elif selected_choices.get('21') == '54' and selected_choices.get('22') =='56'   and selected_choices.get('23') == '58' and selected_choices.get('24') == '60' and selected_choices.get('25') == '62':
                 ocd_desc = Disorder_Diagnosis.objects.get(id=5)
-                likelihood = "unlikely"
+                likelihood = " Highly Unlikely"
                 disorders['ocd'] = True
                 context = {'ocd': disorders['ocd'], 'ocd_desc': ocd_desc,
                 'likelihood':likelihood }

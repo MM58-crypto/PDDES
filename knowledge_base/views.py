@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from .models import Psych_D_symptoms, Disorder_Diagnosis
-from .forms import Symptoms, Diagnosis, System_rules
+from knowledge_base.models import Psych_D_symptoms, Disorder_Diagnosis
+from .forms import Symptoms, Diagnosis
 # Create your views here.
 
 
@@ -12,50 +12,33 @@ from .forms import Symptoms, Diagnosis, System_rules
 # info of that disorder is displayed
 # use foreign key to link  
 @login_required(login_url='/accounts/login/')
-def disorder_info_view(request):
-    if request.method == "POST":
 
-        form = Symptoms(request.POST)
-        form2 = Diagnosis(request.POST)
-        #form3 = System_rules(request.POST)
+def disorder_info_view(request, id):
+    disorder_obj = get_object_or_404(Disorder_Diagnosis, id=id)
+
+    if request.method == 'POST':
+        form = Diagnosis(request.POST, instance=disorder_obj)
         if form.is_valid():
-            kb_data = form.save()
-            messages.success(request, "Data added to the Knowledge base Successfully")
-            form = Symptoms()
-        
-        if form2.is_valid():
-            kb_data = form2.save()
-            dropdown_value = form2.cleaned_data['disorder_name'] # get the selected value from the form
-            disorder_data = Disorder_Diagnosis.objects.get(disorder_name=dropdown_value)
-            messages.success(request, "Data added to the Knowledge base Successfully")
-            form2 = Diagnosis(instance=disorder_data)
+            form.save()
+            # maybe change message to Disorder modified successfully 
+            messages.success(request, "Knowledge Base modified successfully")
+    else:
+        form = Diagnosis(instance=disorder_obj)
 
-        #if form3.is_valid():
-        #    kb_data = form3.save()
-        #    messages.success(request, "Data added to the Knowledge base Successfully")
-        #    form3 = System_rules()
-        else:
-            messages.error(request, 'Error saving form')
-        
-    
-    form = Symptoms()
-    form2 = Diagnosis()
-    #form3 = System_rules()
-    #fetch data from db & render to the kb interface
-    #disorders_data = Disorder_Diagnosis.objects.filter(user=request.user)
-    #symptoms_data = Psych_D_symptoms.objects.filter(user=request.user)
+    disorders = Disorder_Diagnosis.objects.all()
     context = {
-     "symptoms_form": form,
-     "diagnosis_form": form2,
-     #"system_rules":form3,
-        }
+        'diagnosis_form': form,
+        'disorders': disorders,
+    }
+
     return render(request, 'kb_temps/kb_interface.html', context)
 
-# view function to retrieve the data from the database
-def get_data(request):
-    id = request.GET.get(id=id)
-    symptoms_data = Psych_D_symptoms.objects.get(id=id)
-    return JsonResponse({'symptom_name': symptoms_data.symptom_name,
-     'symptom_desc': symptoms_data.symptom_desc,
-        })
-       
+def get_disorder_info(request):
+    disorder_id = request.GET.get('disorder_id')
+    disorder = Disorder_Diagnosis.objects.get(pk=disorder_id)
+    data = {
+        'disorder_desc': disorder.disorder_desc,
+        'disorder_keywords': disorder.disorder_keywords,
+        'recommendation': disorder.recommendation,
+    }
+    return JsonResponse(data)

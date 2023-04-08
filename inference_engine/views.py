@@ -1,272 +1,509 @@
 from django.shortcuts import render, redirect 
 from django.contrib.auth.decorators import login_required
 from ui.models import Question, Choice
+from inference_engine.models import GHQ12Question, GHChoice
 from django.views import generic
-from .forms import QuestionForm, GHQ12Form
-from inference_engine.models import GHQ12Response
+from .forms import  *
+# import all forms instead
+#from inference_engine.models import GHQ12Response
 
 from knowledge_base.models import Psych_D_symptoms, Disorder_Diagnosis
-#from knowledge_base.models import System_rules
 import rules 
 
-
-""" 
-Current rules defined in the rules model : 
- 1. IF Q1 == 'Frequently' AND Q2 == 'Yes' OR Q2 == 'Sometimes' AND Q3 == " Yes" AND Q4 == "Yes" AND Q5 == "Yes"
-THEN C1 ==  "Social Anxiety"
- 2.  IF Q6 == 'True' AND Q7 == 'Yes' OR Q7 == 'Occasionally' AND Q8 == 'Yes' AND Q9 == 'Yes' AND Q10 == 'Agree'  AND Q11 == 'Always' OR Q11 =='Occasionally'
-THEN C2 ==  "Generalized Anxiety Disorder"
- 3.   IF Q12 == 'Yes' AND Q13 == 'Direct experience' OR Q13 == 'Witnessing the event occurring to someone else' OR Q13 == 'Finding out that a close family member or close friend experienced the horrific event(s)' AND Q14 == 'Yes' AND Q15 == 'Frequently' OR Q15 == 'Occasionally' AND Q16 == 'Yes'  AND Q17 == 'Yes' OR Q18 == 'No'
-THEN C3 ==  "Post Traumatic Stress Disorder"
- 4.  IF Q19 == 'Yes' AND Q20 == 'Yes' AND Q21 == 'Yes' AND Q22 == 'Yes'  AND Q23 == 'Yes'  
-THEN C4 ==  "Obsessive Compulsive Disorder"
- 5.  IF (Q24 == 'Yes' AND Q25 == 'Yes' AND Q26 == 'Yes' AND Q27 == 'Yes'  AND Q28 == 'Yes)'  AND( Q29 == 'Yes'  OR  Q30 == 'Yes')
-THEN C5 ==  "Anti social personality disorder"
- 6.  IF Q31 == 'Yes' AND Q32 == 'I did lose interest' AND Q33 == 'Yes i gained/lost a lot of weight' AND Q34 == 'Yes'  AND Q35 == 'Yes' OR Q35 == 'Such thoughts occur to me occasionally'  AND Q36 == 'Yes'  OR  37 == 'Yes' 
-THEN C6 ==  "Depression"
- 7.  IF Q38 == 'Yes' AND Q39 == 'Yes' AND Q40 == 'Yes' AND Q41 == 'Yes'  AND Q42 == 'Yes' AND Q43 == 'Yes'  AND Q44 == 'Yes'  AND  45 == 'Yes' 
-THEN C7 ==  "Bipolar disorder" 
-
-"""
 
 @login_required(login_url='/accounts/login/')
 def d_test_view(request):
     # backward chaining <-- required 
     
-    # add levels (eg. Highly likely, Likely, possible, unlikely, highly unlikely)
-    # general questions first then shift to specific questions based on the input
+   
     # a dictionary can be used to store all the disorders and implement the rules
-    disorders = {'social_anxiety':False, 'ptsd':False, 'bipolar': False, 'anti_social':False, 'ocd':False, 'anxiety': False, 'depression': False}
-    #social_anxiety = False
+    disorders = { 'social_anxiety': {'score': 0, 'likelihood': '', 'description': Disorder_Diagnosis.objects.get(id=1)},
+        'depression': {'score': 0, 'likelihood': '', 'description':Disorder_Diagnosis.objects.get(id=3)},
+        'ocd': {'score': 0, 'likelihood': '', 'description':Disorder_Diagnosis.objects.get(id=5)},
+        'ptsd': {'score': 0, 'likelihood': '', 'description':Disorder_Diagnosis.objects.get(id=4)},
+        'gen_anxiety': {'score': 0, 'likelihood': '', 'description':Disorder_Diagnosis.objects.get(id=6)}, 
+        'anti_social': {'score': 0, 'likelihood': '', 'description':Disorder_Diagnosis.objects.get(id=7)},
+        'bipolar': {'score': 0, 'likelihood': '', 'description':Disorder_Diagnosis.objects.get(id=2)}  
+        }
+    
+    # add instructions before starting the test 
+    sa_questions = Question.objects.all()[0:5]
+    gen_anxiety_qs = Question.objects.all()[6:11]
+    depression_qs = Question.objects.all()[31:37]
+    ptsd_qs = Question.objects.all()[12:18]
+    ocd_qs = Question.objects.all()[18:23]
+    anti_social_qs = Question.objects.all()[23:30]
+    #bipolar_qs -- incomplete 
+    questions = {}
+    for question in Question.objects.all():
+        choices = {}
+        for choice in Choice.objects.filter(question=question):
+            # assigning score for each option
+            # eg: yes/agreements, no/disagreements, neutral/sometimes/not sure)
+            # if the selected choice contains any of these assign score**
+            agreements = ['Yes', 'Frequently' ,'Agree', 'Always', 'True', 'I did lose interest', 'Yes i gained/lost a lot of weight ', 'Yes, Frequently', 'Yes i have stolen/hurt and I feel sorry about it.', 'Yes i have stolen/hurt', 'Yes, I have repeatedly performed such acts.' , 'Yes, I have']
+            ptsd_options = ['Direct experience', ' Witnessing the event occurring to someone else', ' Finding out that a close family member or close friend experienced the horrific event(s)']
+            sometimes = ['Sometimes', 'Occasionally', 'From time to time' , 'Such thoughts occur to me occasionally ']
+            disagreements = ['No', 'Not really', 'Rarely', 'Never, always focused', 'Disagree', 'False', 'No, my weight did not drastically change', 'No, I havent ', 'No, I have not repeatedly performed such acts.', 'No, i dont experience distressing memories', 'I dont experience such thoughts or urges', 'No, I have not'
+            'I did not get exposed ']
+            if choice.choice_text in agreements and ptsd_options:
+                choices[choice.choice_text]= 2
+            elif choice.choice_text in sometimes:
+                choices[choice.choice_text] = 1
+            elif choice.choice_text in disagreements:
+                choices[choice.choice_text] = 0
+    # add more questions (5 or 6 more for each disorder) 
+        questions[question.question_text] = choices
     if request.method == "POST":
-        form = QuestionForm(request.POST)
-        # this approach is not quite efficient and time consuming
-        # there must be an easier way to do this (maybe the score method)
+        form = Social_Anxiety(request.POST)
         if form.is_valid():
             selected_choices = form.get_selected_choices()
-            # social anxiety, highly likely
-            if selected_choices.get('2') == '6' and selected_choices.get('3') =='7' and selected_choices.get('4') == '10' and selected_choices.get('5') == '13' and selected_choices.get('6') == '16':
-                sa_desc = Disorder_Diagnosis.objects.get(id=1)
-                likelihood = "very high"
-                disorders['social_anxiety'] = True
-                context = {'social_anxiety': disorders['social_anxiety'],
-                 'sa_desc':sa_desc, 'likelihood': likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-            # possible 
-            elif selected_choices.get('2') == '5' and selected_choices.get('3') =='9' and selected_choices.get('4') == '12' and selected_choices.get('5') == '15' and selected_choices.get('6') == '17':
-                sa_desc = Disorder_Diagnosis.objects.get(id=1)
-                likelihood = "possible "
-                disorders['social_anxiety'] = True
-                context = {'social_anxiety': disorders['social_anxiety'],
-                 'sa_desc':sa_desc, 'likelihood': likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-            # unlikely 
-            elif selected_choices.get('2') == '4' and selected_choices.get('3') =='8' and selected_choices.get('4') == '11' and selected_choices.get('5') == '14' and selected_choices.get('6') == '17':
-                sa_desc = Disorder_Diagnosis.objects.get(id=1)
-                likelihood = "unlikely "
-                disorders['social_anxiety'] = True
-                context = {'social_anxiety': disorders['social_anxiety'],
-                 'sa_desc':sa_desc, 'likelihood': likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-            # anxiety , 
-            # highly likely
-            if selected_choices.get('7') == '18' and selected_choices.get('8') =='20' or selected_choices.get('8') =='22'  and selected_choices.get('9') == '23' and selected_choices.get('10') == '25' and selected_choices.get('11') == '28'and selected_choices.get('12') == '30' or selected_choices.get('12') == '31':
-                aa_desc = Disorder_Diagnosis.objects.get(id=6)
-                likelihood = "very high"
-                disorders['anxiety'] = True
-                context = {'anxiety': disorders['anxiety'],
-                 'aa_desc':aa_desc, 'likelihood': likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-            # possible 
-            elif selected_choices.get('7') == '18' and selected_choices.get('8') =='22'   and selected_choices.get('9') == '24' and selected_choices.get('10') == '27' and selected_choices.get('11') == '29'and selected_choices.get('12') == '31' or selected_choices.get('12') == '32':
-                aa_desc = Disorder_Diagnosis.objects.get(id=6)
-                likelihood = "possible"
-                disorders['anxiety'] = True
-                context = {'anxiety': disorders['anxiety'],
-                 'aa_desc':aa_desc, 'likelihood': likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-            # unlikely
-            elif selected_choices.get('7') == '18' and selected_choices.get('8') =='20' or selected_choices.get('8') =='22'  and selected_choices.get('9') == '23' and selected_choices.get('10') == '25' and selected_choices.get('11') == '28'and selected_choices.get('12') == '30' or selected_choices.get('12') == '31':
-                aa_desc = Disorder_Diagnosis.objects.get(id=6)
-                likelihood = "unlikely"
-                disorders['anxiety'] = True
-                context = {'anxiety': disorders['anxiety'],
-                 'aa_desc':aa_desc, 'likelihood': likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-            # ptsd, highly likely
-            if selected_choices.get('13') == '34' and (selected_choices.get('14') =='36' or selected_choices.get('14') =='37' or selected_choices.get('14') == '38') and selected_choices.get('15') == '39'  and selected_choices.get('17') == '44' or selected_choices.get('17') == '45' and selected_choices.get('18') == '47' and selected_choices.get('19') == '50'and selected_choices.get('20') == '52' :
-                ptsd_desc = Disorder_Diagnosis.objects.get(id=4)
-                likelihood = "very high"
-                disorders['ptsd'] = True
-                context = {'ptsd': disorders['ptsd'], 'likelihood':likelihood,
-                 'ptsd_desc': ptsd_desc
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-            # possible 
-            elif selected_choices.get('13') == '34' and (selected_choices.get('14') =='36' or selected_choices.get('14') =='37' or selected_choices.get('14') == '38') and selected_choices.get('15') == '40'  and (selected_choices.get('17') == '45' or selected_choices.get('17') == '46') and selected_choices.get('18') == '48' and selected_choices.get('19') == '49'and selected_choices.get('20') == '52' :
-                ptsd_desc = Disorder_Diagnosis.objects.get(id=4)
-                likelihood = "possible"
-                disorders['ptsd'] = True
-                context = {'ptsd': disorders['ptsd'], 'likelihood':likelihood,
-                 'ptsd_desc': ptsd_desc
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-            # unlikely
-            elif selected_choices.get('13') =='35' :
-                ptsd_desc = Disorder_Diagnosis.objects.get(id=4)
-                likelihood = "Unlikely"
-                disorders['ptsd'] = False # maybe it should be false
-                context = {'ptsd': disorders['ptsd'], 'likelihood':likelihood,
-                 'ptsd_desc': ptsd_desc , 
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-
-            # ocd, highly likely 
-            if selected_choices.get('21') == '53' and selected_choices.get('22') =='55' and selected_choices.get('23') == '57' and selected_choices.get('24') == '59' and selected_choices.get('25') == '61':
-                ocd_desc = Disorder_Diagnosis.objects.get(id=5)
-                likelihood = "very high"
-                disorders['ocd'] = True
-                context = {'ocd': disorders['ocd'], 'ocd_desc': ocd_desc,
-                'likelihood':likelihood, 
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context)
-
-            # possible (ocd)
-            elif selected_choices.get('21') == '53' and selected_choices.get('22') =='55'   and selected_choices.get('23') == '57' and selected_choices.get('24') == '59' and selected_choices.get('25') == '61':
-                ocd_desc = Disorder_Diagnosis.objects.get(id=5)
-                likelihood = "possible"
-                disorders['ocd'] = True
-                context = {'ocd': disorders['ocd'], 'ocd_desc': ocd_desc,
-                'likelihood':likelihood}
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-            # unlikely (ocd)
-            elif selected_choices.get('21') == '54' and selected_choices.get('22') =='56'   and selected_choices.get('23') == '58' and selected_choices.get('24') == '60' and selected_choices.get('25') == '62':
-                ocd_desc = Disorder_Diagnosis.objects.get(id=5)
-                likelihood = "unlikely"
-                disorders['ocd'] = True
-                context = {'ocd': disorders['ocd'], 'ocd_desc': ocd_desc,
-                'likelihood':likelihood }
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-            # anti_social highly likely
-            if selected_choices.get('26') == '113' and selected_choices.get('27') =='65' and selected_choices.get('28') =='67' and selected_choices.get('29') == '69' and (selected_choices.get('30') == '71' or selected_choices.get('30')=='112') and selected_choices.get('31') == '73' and selected_choices.get('32') == '75':
-                anti_social_desc = Disorder_Diagnosis.objects.get(id=7)
-                likelihood = "very high"
-                disorders['anti_social'] = True
-                context = {'anti_social': disorders['anti_social'],'anti_social_desc':anti_social_desc,
-                'likelihood': likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-            # anti_social possible
-            elif selected_choices.get('26') == '63' and selected_choices.get('27') =='66' and selected_choices.get('28') =='67'  and selected_choices.get('29') == '69' and (selected_choices.get('30') == '71' or selected_choices.get('30') =='112') and selected_choices.get('31') == '74' and selected_choices.get('32') == '75':
-                anti_social_desc = Disorder_Diagnosis.objects.get(id=7)
-                likelihood = "possible"
-                disorders['anti_social'] = True
-                context = {'anti_social': disorders['anti_social'],'anti_social_desc':anti_social_desc,
-                'likelihood': likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-            # anti social unlikely 
-            elif (selected_choices.get('26') == '64' or selected_choices.get('26')=='63') and selected_choices.get('27') =='66' and selected_choices.get('28') =='68'  and selected_choices.get('29') == '70' and (selected_choices.get('30') == '71' or selected_choices.get('30') =='112') and selected_choices.get('31') == '74' and selected_choices.get('32') == '76':
-                anti_social_desc = Disorder_Diagnosis.objects.get(id=7)
-                likelihood = "unlikely"
-                disorders['anti_social'] = True
-                context = {'anti_social': disorders['anti_social'],'anti_social_desc':anti_social_desc,
-                'likelihood': likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-            # depression highly likely 
-            if selected_choices.get('34') == '80' and (selected_choices.get('35') =='82' or selected_choices.get('35') =='83') and selected_choices.get('36') =='84'  and (selected_choices.get('37') == '86' or  selected_choices.get('37') == '87') and selected_choices.get('38') == '89' and selected_choices.get('39') == '91':
-                depression_desc = Disorder_Diagnosis.objects.get(id=3)
-                likelihood = "very high"
-                disorders['depression'] = True
-                context = {'depression': disorders['depression'], 'depression_desc':depression_desc,
-                'likelihood': likelihood, 
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-             # depression possible 
-            elif selected_choices.get('34') == '80' and selected_choices.get('35') =='83' and (selected_choices.get('36') =='85' or selected_choices.get('36') =='84')  and selected_choices.get('37') == '86'  and selected_choices.get('38') == '90' and selected_choices.get('39') == '92':
-                depression_desc = Disorder_Diagnosis.objects.get(id=3)
-                likelihood = "possible"
-                disorders['depression'] = True
-                context = {'depression': disorders['depression'], 'depression_desc':depression_desc,
-                'likelihood': likelihood, 
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-             # depression unlikely  
-            elif selected_choices.get('34') == '81' and  selected_choices.get('35') =='83' and selected_choices.get('36') =='85'  and selected_choices.get('37') == '88'  and selected_choices.get('38') == '90' and selected_choices.get('39') == '92':
-                depression_desc = Disorder_Diagnosis.objects.get(id=3)
-                likelihood = "unlikely"
-                disorders['depression'] = True
-                context = {'depression': disorders['depression'], 'depression_desc':depression_desc,
-                'likelihood': likelihood, 
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-
-            # bipolar highly likely 
-            if selected_choices.get('40') == '93' and selected_choices.get('41') =='95' and selected_choices.get('42') =='97'  and selected_choices.get('43') == '99' and selected_choices.get('44') == '101' and selected_choices.get('45') == '103'and selected_choices.get('46') == '105' and selected_choices.get('47') == '107' and selected_choices.get('48') == '109':
-                likelihood = "very high"
-                bipolar_desc = Disorder_Diagnosis.objects.get(id=2)
-                disorders['bipolar'] = True
-                context = {'bipolar': disorders['bipolar'],
-                'bipolar_desc': bipolar_desc, 'likelihood':likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-
-            # bipolar  possible
-            elif selected_choices.get('40') == '94' and selected_choices.get('41') =='96' and selected_choices.get('42') =='97'  and selected_choices.get('43') == '99' and selected_choices.get('44') == '102' and selected_choices.get('45') == '104'and selected_choices.get('46') == '105' and selected_choices.get('47') == '108' and (selected_choices.get('48') == '109' or selected_choices.get('48')=='111'):
-                likelihood = "possible"
-                bipolar_desc = Disorder_Diagnosis.objects.get(id=2)
-                disorders['bipolar'] = True
-                context = {'bipolar': disorders['bipolar'],
-                'bipolar_desc': bipolar_desc, 'likelihood':likelihood
-                }
-                return render(request, "Screening_pgs/prediction_result.html", context) 
-
-            # bipolar unlikely 
-            elif selected_choices.get('40') == '94' and selected_choices.get('41') =='96' and selected_choices.get('42') =='98'  and selected_choices.get('43') == '100' and selected_choices.get('44') == '102' and selected_choices.get('45') == '104'and selected_choices.get('46') == '106' and selected_choices.get('47') == '108' and selected_choices.get('48') == '110':
-               likelihood = "unlikely"
-               bipolar_desc = Disorder_Diagnosis.objects.get(id=2)
-               disorders['bipolar'] = True
-               context = {'bipolar': disorders['bipolar'],
-               'bipolar_desc': bipolar_desc, 'likelihood':likelihood
-               }
-               return render(request, "Screening_pgs/prediction_result.html", context) 
+            # calculating score 
+            for question_text, choice_text in selected_choices:
+                for disorder in disorders.values():
+                    disorder['score'] += questions[question_text][choice_text]
+            #  store the questions of each disorder in a list 
+            # goal --> display the results according to the type of questions -- done 
+            # eg. bipolar results when given bipolar related questions
+            # gen questions direct to specific questions based on sco
+            #if form displays d1 (d=disorder) qs THEN get results for that disorder -- done 
+            if sa_questions and sa_questions[0].id == int(list(form.cleaned_data.keys())[0]):
+                #iterate over the the disorder dictionary
+                #for disorder in disorders.values():
+                disorder_context = determine_disorder(disorders['social_anxiety']) 
+                # Render results page for each disorder
+                template_name = "Screening_pgs/new_results.html"
+                return render(request, template_name, disorder_context)
+           
             
-
             
-
-       #return redirect('/results')
-    
-    form = QuestionForm()
+    form = Social_Anxiety()
     context = {
         'questions_form': form, 
-
     }
     return render(request, "Screening_pgs/diagnosis_test.html", context)
+
+def  anxiety_page_view(request):
+
+    gen_anxiety = {'score': 0, 'likelihood': '', 
+            'description':Disorder_Diagnosis.objects.get(id=6)
+            }
+    questions = {}
+    for question in Question.objects.all():
+        choices = {}
+        for choice in Choice.objects.filter(question=question):
+            # assigning score for each option
+            # eg: yes/agreements, no/disagreements, neutral/sometimes/not sure)
+            # if the selected choice contains any of these assign score**
+            agreements = ['Yes', 'Frequently' ,'Agree', 'Always', 'True', 'I did lose interest', 'Yes i gained/lost a lot of weight ', 'Yes, Frequently', 'Yes i have stolen/hurt and I feel sorry about it.', 'Yes i have stolen/hurt', 'Yes, I have repeatedly performed such acts.' , 'Yes, I have']
+            sometimes = ['Sometimes', 'Occasionally', 'From time to time' , 'Such thoughts occur to me occasionally ']
+            disagreements = ['No', 'Not really', 'Rarely', 'Never, always focused', 'Disagree', 'False', 'No, my weight did not drastically change', 'No, I havent ', 'No, I have not repeatedly performed such acts.', 'No, i dont experience distressing memories', 'I dont experience such thoughts or urges', 'No, I have not' ,'I did not get exposed ']
+            if choice.choice_text in sometimes:
+                choices[choice.choice_text] = 1
+            elif choice.choice_text in disagreements:
+                choices[choice.choice_text] = 0
+            elif choice.choice_text in agreements:
+                choices[choice.choice_text] = 2
+            else:
+                choices[choice.choice_text] = 0
+    
+        questions[question.question_text] = choices
+   
+    if request.method=="POST":
+        form = Anxiety_Form(request.POST)
+        if form.is_valid():
+            selected_choices = form.get_selected_choices()
+           
+            for question_text, choice_text in selected_choices:
+                gen_anxiety['score'] += questions[question_text][choice_text]
+
+            
+            #for disorder in disorders.values():
+            disorder_context = determine_disorder(gen_anxiety)  
+            # Render results page for each disorder
+            template_name = "Screening_pgs/new_results.html"
+            return render(request, template_name, disorder_context)
+            
+    form = Anxiety_Form()
+    context = {
+        'a_questions_form': form
+    }
+    return render(request,"Screening_pgs/disorders_questions/anxiety.html", context)
+
+def socialanxiety_page_view(request):
+
+    social_anxiety =  {'score': 0, 'likelihood': '', 
+    'description': Disorder_Diagnosis.objects.get(id=1)}
+    questions = {}
+    for question in Question.objects.all():
+        choices = {}
+        for choice in Choice.objects.filter(question=question):
+            # assigning score for each option
+            # eg: yes/agreements, no/disagreements, neutral/sometimes/not sure)
+            # if the selected choice contains any of these assign score**
+            agreements = ['Yes', 'Frequently' ,'Agree', 'Always', 'True', 'I did lose interest', 'Yes i gained/lost a lot of weight ', 'Yes, Frequently', 'Yes i have stolen/hurt and I feel sorry about it.', 'Yes i have stolen/hurt', 'Yes, I have repeatedly performed such acts.' , 'Yes, I have']
+            sometimes = ['Sometimes', 'Occasionally', 'From time to time' , 'Such thoughts occur to me occasionally ']
+            disagreements = ['No', 'Not really', 'Rarely', 'Never, always focused', 'Disagree', 'False', 'No, my weight did not drastically change', 'No, I havent ', 'No, I have not repeatedly performed such acts.', 'No, i dont experience distressing memories', 'I dont experience such thoughts or urges', 'No, I have not'
+            'I did not get exposed ']
+            if choice.choice_text in agreements:
+                choices[choice.choice_text]= 2
+            elif choice.choice_text in sometimes:
+                choices[choice.choice_text] = 1
+            elif choice.choice_text in disagreements:
+                choices[choice.choice_text] = 0
+    
+        questions[question.question_text] = choices
+    
+    if request.method=="POST":
+        form = Social_Anxiety(request.POST)
+        selected_choices = form.get_selected_choices()
+        if form.is_valid():
+            for question_text, choice_text in selected_choices:
+                
+                social_anxiety['score'] += questions[question_text][choice_text]
+
+           
+            #for disorder in disorders.values():
+            disorder_context = determine_disorder(social_anxiety) 
+            # Render results page for each disorder
+            template_name = "Screening_pgs/new_results.html"
+            return render(request, template_name, disorder_context)
+            
+    
+    form = Social_Anxiety() 
+    context = {
+        'sa_questions_form': form
+    }
+    return render(request,"Screening_pgs/disorders_questions/sa.html", context)
+
+def  depression_page_view(request):
+
+    depression =  {'score': 0, 'likelihood': '', 
+   'description':Disorder_Diagnosis.objects.get(id=3)}
+
+    questions = {}
+    for question in Question.objects.all():
+        choices = {}
+        for choice in Choice.objects.filter(question=question):
+            # assigning score for each option
+            # eg: yes/agreements, no/disagreements, neutral/sometimes/not sure)
+            # if the selected choice contains any of these assign score**
+            agreements = ['Yes', 'Frequently' ,'Agree', 'Always', 'True', 'I did lost interest', 'Yes i gained/lost a lot of weight', 'Yes, Frequently', 'Yes i have stolen/hurt and I feel sorry about it.', 'Yes i have stolen/hurt', 'Yes, I have repeatedly performed such acts.' , 'Yes, I have']
+            sometimes = ['Sometimes', 'Occasionally', 'From time to time' , 'Such thoughts occur to me occasionally ']
+            disagreements = ['No', 'Not really', 'Rarely', 'Never, always focused', 'Disagree', 'False', 'No, my weight did not drastically change', 'No, I havent ', 'No, I have not repeatedly performed such acts.', 'No, i dont experience distressing memories', 'I dont experience such thoughts or urges', 'No, I have not'
+            'I did not get exposed ']
+            if choice.choice_text in agreements:
+                choices[choice.choice_text]= 2
+            elif choice.choice_text in sometimes:
+                choices[choice.choice_text] = 1
+            elif choice.choice_text in disagreements:
+                choices[choice.choice_text] = 0
+    
+        questions[question.question_text] = choices
+   
+    if request.method=="POST":
+        form = Depression_Form(request.POST)
+        if form.is_valid():
+            selected_choices = form.get_selected_choices()
+            for question_text, choice_text in selected_choices:
+                
+                depression['score'] += questions[question_text][choice_text]
+
+            
+            #for disorder in disorders.values():
+            disorder_context = determine_disorder(depression) 
+            # Render results page for each disorder
+            template_name = "Screening_pgs/new_results.html"
+            return render(request, template_name, disorder_context)
+            
+    
+    form = Depression_Form() # change later 
+    context = {
+        'depression_questions_form': form
+    }
+    return render(request,"Screening_pgs/disorders_questions/depression.html", context)
+
+
+def ocd_view(request):
+
+    ocd =  {'score': 0, 'likelihood': '', 
+   'description':Disorder_Diagnosis.objects.get(id=5)}
+
+    questions = {}
+    for question in Question.objects.all():
+        choices = {}
+        for choice in Choice.objects.filter(question=question):
+            # assigning score for each option
+            # eg: yes/agreements, no/disagreements, neutral/sometimes/not sure)
+            # if the selected choice contains any of these assign score**
+            agreements = ['Yes', 'Frequently' ,'Agree', 'Always', 'True', 'I did lose interest', 'Yes i gained/lost a lot of weight ', 'Yes, Frequently', 'Yes i have stolen/hurt and I feel sorry about it.', 'Yes i have stolen/hurt', 'Yes, I have repeatedly performed such acts.' , 'Yes, I have']
+            sometimes = ['Sometimes', 'Occasionally', 'From time to time' , 'Such thoughts occur to me occasionally ']
+            disagreements = ['No', 'Not really', 'Rarely', 'Never, always focused', 'Disagree', 'False', 'No, my weight did not drastically change', 'No, I havent ', 'No, I have not repeatedly performed such acts.', 'No, i dont experience distressing memories', 'I dont experience such thoughts or urges', 'No, I have not'
+            'I did not get exposed ']
+            if choice.choice_text in agreements:
+                choices[choice.choice_text]= 2
+            elif choice.choice_text in sometimes:
+                choices[choice.choice_text] = 1
+            elif choice.choice_text in disagreements:
+                choices[choice.choice_text] = 0
+    
+        questions[question.question_text] = choices
+    
+
+    if request.method=="POST":
+        form = ocd_Form(request.POST)
+        if form.is_valid():
+            selected_choices = form.get_selected_choices()
+            for question_text, choice_text in selected_choices:
+                ocd['score'] += questions[question_text][choice_text]
+
+                #for disorder in disorders.values():
+            disorder_context = determine_disorder(ocd) 
+            # Render results page for each disorder
+            template_name = "Screening_pgs/new_results.html"
+            return render(request, template_name, disorder_context)
+            
+    
+    form = ocd_Form() 
+    context = {
+        'ocd_questions_form': form
+    }
+    return render(request,"Screening_pgs/disorders_questions/ocd.html", context)
+
+
+def antisocial_view(request):
+
+    anti_social =  {'score': 0, 'likelihood': '', 
+   'description':Disorder_Diagnosis.objects.get(id=5)}
+
+    questions = {}
+    for question in Question.objects.all():
+        choices = {}
+        for choice in Choice.objects.filter(question=question):
+            # assigning score for each option
+            # eg: yes/agreements, no/disagreements, neutral/sometimes/not sure)
+            # if the selected choice contains any of these assign score**
+            agreements = ['Yes', 'Frequently' ,'Agree', 'Always', 'True', 'I did lose interest', 'Yes i gained/lost a lot of weight ', 'Yes, Frequently', 'Yes i have stolen/hurt and I feel sorry about it.', 'Yes i have stolen/hurt', 'Yes, I have repeatedly performed such acts.' , 'Yes, I have']
+            sometimes = ['Sometimes', 'Occasionally', 'From time to time' , 'Such thoughts occur to me occasionally ']
+            disagreements = ['No', 'Not really', 'Rarely', 'Never, always focused', 'Disagree', 'False', 'No, my weight did not drastically change', 'No, I havent ', 'No, I have not repeatedly performed such acts.', 'No, i dont experience distressing memories', 'I dont experience such thoughts or urges', 'No, I have not'
+            'I did not get exposed ']
+            if choice.choice_text in agreements:
+                choices[choice.choice_text]= 2
+            elif choice.choice_text in sometimes:
+                choices[choice.choice_text] = 1
+            elif choice.choice_text in disagreements:
+                choices[choice.choice_text] = 0
+    
+        questions[question.question_text] = choices
+   
+
+    if request.method=="POST":
+        form = Antisocial_Form(request.POST)
+        if form.is_valid():
+            selected_choices = form.get_selected_choices()
+            for question_text, choice_text in selected_choices:
+                
+                anti_social['score'] += questions[question_text][choice_text]
+
+            
+            #for disorder in disorders.values():
+            disorder_context = determine_disorder(anti_social) 
+            # Render results page for each disorder
+            template_name = "Screening_pgs/new_results.html"
+            return render(request, template_name, disorder_context)
+            
+    
+    form = Antisocial_Form() 
+    context = {
+        'antisocial_questions_form': form
+    }
+    return render(request,"Screening_pgs/disorders_questions/anti_social.html", context)
+
+
+def ptsd_page_view(request):
+
+    ptsd =  {'score': 0, 'likelihood': '', 
+   'description':Disorder_Diagnosis.objects.get(id=4)}
+
+    questions = {}
+    for question in Question.objects.all():
+        choices = {}
+        for choice in Choice.objects.filter(question=question):
+            # assigning score for each option
+            # eg: yes/agreements, no/disagreements, neutral/sometimes/not sure)
+            # if the selected choice contains any of these assign score**
+            agreements = ['Yes', 'Frequently' ,'Agree', 'Always', 'True', 'I did lose interest', 'Yes i gained/lost a lot of weight ', 'Yes, Frequently', 'Yes i have stolen/hurt and I feel sorry about it.', 'Yes i have stolen/hurt', 'Yes, I have repeatedly performed such acts.' , 'Yes, I have']
+            ptsd_options = ['Direct experience', 'Witnessing the event occuring to someone else ', ' Finding out that a close family member or close friend experienced the horrific event(s)',  'I did not get exposed']
+            sometimes = ['Sometimes', 'Occasionally', 'From time to time' , 'Such thoughts occur to me occasionally ']
+            disagreements = ['No', 'Not really', 'Rarely', 'Never, always focused', 'Disagree', 'False', 'No, my weight did not drastically change', 'No, I havent', 'No, I have not repeatedly performed such acts.', 'No, i dont experience distressing memories', 'I dont experience such thoughts or urges', 'No, I have not'
+            'I did not get exposed ']
+            if choice.choice_text in agreements and ptsd_options:
+                choices[choice.choice_text]= 2
+            elif choice.choice_text in sometimes:
+                choices[choice.choice_text] = 1
+            elif choice.choice_text in disagreements:
+                choices[choice.choice_text] = 0
+    
+        questions[question.question_text] = choices
+    ptsd_qs = Question.objects.all()[12:18]
+
+    if request.method=="POST":
+        form = ptsd_Form(request.POST)
+        if form.is_valid():
+            selected_choices = form.get_selected_choices()
+            for question_text, choice_text in selected_choices:
+                
+                ptsd['score'] += questions[question_text][choice_text]
+
+            
+            #for disorder in disorders.values():
+            disorder_context = determine_disorder(ptsd) 
+            # Render results page for each disorder
+            template_name = "Screening_pgs/new_results.html"
+            return render(request, template_name, disorder_context)
+            
+    
+    form = ptsd_Form() 
+    context = {
+        'ptsd_questions_form': form
+    }
+    return render(request,"Screening_pgs/disorders_questions/ptsd.html", context)
+
+
+def determine_disorder(disorder):
+
+    if disorder['score'] >= 10:
+        disorder['likelihood'] = 'Highly Likely'
+    elif disorder['score'] >= 5: 
+        disorder['likelihood'] = 'Possible'                        
+    else:
+        disorder['likelihood'] = 'Unlikely'
+    desc = disorder['description']
+    score = disorder['score']
+    context = {
+         'likelihood': disorder['likelihood'], 
+         'description': desc,
+         'score': score,
+         'disorder': disorder,
+     }
+    return context 
+
 def ghq_view(request):
+    gen_questions = {}
+    
+    for question in GHQ12Question.objects.all():
+        choices = {}
+        for choice in GHChoice.objects.filter(question=question):
+            # assigning score for each option
+            # eg: yes/agreements, no/disagreements, neutral/sometimes/not sure)
+            # if the selected choice contains any of these assign score**
+            high_score = ["Nearly every day", "Yes, completely," "Almost every night", "Yes, a great deal",  "Almost every day"]
+            hmid_score = ["More than half the days, Yes, quite a bit", "Several times a week"]
+            low_score = ["Several days", "Yes, but just a little", "Occasionally"]
+            zero = ["Not at all", "No, not at all", "Never"]
+            if choice.choice_text in high_score:
+                choices[choice.choice_text]= 3
+            elif choice.choice_text in hmid_score:
+                choices[choice.choice_text] = 2
+            elif choice.choice_text in low_score:
+                choices[choice.choice_text] = 1
+            elif choice.choice_text in zero:
+                choices[choice.choice_text] = 0 
+
+        gen_questions[question.question_text] = choices
+        #
+    disorders_q_scores = {
+        'social_anxiety':{'score':0},
+        'depression':{'score':0},
+        'gen_anxiety':{'score':0},
+        'ptsd':{'score':0},
+        'ocd':{'score':0},
+        'bipolar':{'score':0},
+        'anti_social':{'score':0},
+
+    }
     if request.method =="POST":
         form = GHQ12Form(request.POST)
         if form.is_valid():
-           form.save()
             
-           score = calculate_ghq12_score()
-           if score <= 11:
-               message = "Your score suggests that you are not currently experiencing significant psychological distress."
-               delete_all_objs(GHQ12Response)
-           elif score <= 23:
-               message = "Your score suggests that you may be experiencing some psychological distress. We recommend that you seek further evaluation from a mental health professional."
-               delete_all_objs(GHQ12Response)
-           else:
-               message = "Your score suggests that you are experiencing significant psychological distress. We strongly recommend that you seek further evaluation from a mental health professional."
-               delete_all_objs(GHQ12Response)
-           return render(request, 'Screening_pgs/ghq_result.html', {'score': score, 'message': message})
+           selected_choices = form.get_selected_choices()
+           # if choice in q1 == choice.choice_text
+            # change it to be list compatible
+            # this is if the user scores high or selects the extreme option from questions
+           if ('Over the past two weeks, how often have you felt down, depressed, or hopeless?', 'Nearly every day') in selected_choices and ('Over the past two weeks, have you lost interest or pleasure in activities you normally enjoy?', 'Yes, completely') in selected_choices and ('Over the past two weeks, have you experienced a noticeable decrease or increase in your appetite or weight?', 'Yes, a great deal') in selected_choices:
+             disorders_q_scores['depression']['score'] += 3
+           # add elifs later
+           elif ('Over the past two weeks, how often have you felt down, depressed, or hopeless?', 'Nearly every day') in selected_choices or ('Over the past two weeks, have you lost interest or pleasure in activities you normally enjoy?', 'Yes, completely') in selected_choices or ('Over the past two weeks, have you experienced a noticeable decrease or increase in your appetite or weight?', 'Yes, a great deal') in selected_choices:
+             disorders_q_scores['depression']['score'] += 1
+            
 
+           if ('Over the past two weeks, how often have you felt nervous, anxious, or on edge?', 'Nearly every day') in selected_choices and ('Over the past two weeks, have you avoided situations or activities because of fear or anxiety? ', 'Yes, completely') in selected_choices:
+               disorders_q_scores['gen_anxiety']['score'] += 2
+
+           elif ('Over the past two weeks, how often have you felt nervous, anxious, or on edge?', 'Nearly every day') in selected_choices or ('Over the past two weeks, have you avoided situations or activities because of fear or anxiety? ', 'Yes, completely') in selected_choices:
+               disorders_q_scores['gen_anxiety']['score'] += 1
+           
+           if (' Over the past two weeks, how often have you experienced intrusive, unwanted, or distressing thoughts? ', 'Almost every day') in selected_choices and ('Over the past two weeks, have you experienced any physical or emotional reactions when something reminded you of a traumatic event from your past, such as nightmares, flashbacks, intense feelings of distress, or physical sensations like sweating or trembling?', 'Yes, a great deal'):
+               disorders_q_scores['ptsd']['score'] += 2
+
+           elif (' Over the past two weeks, how often have you experienced intrusive, unwanted, or distressing thoughts? ', 'Almost every day') in selected_choices or ('Over the past two weeks, have you experienced any physical or emotional reactions when something reminded you of a traumatic event from your past, such as nightmares, flashbacks, intense feelings of distress, or physical sensations like sweating or trembling?', 'Yes, a great deal'):
+               disorders_q_scores['ptsd']['score'] += 1
+           
+           if ('Over the past two weeks, have you engaged in repetitive behaviors or mental acts to reduce anxiety or distress?', 'Yes, a great deal') in selected_choices and ('Over the past two weeks, have you engaged in any obsessive or compulsive behaviors that interfere with your daily activities or cause significant distress, such as excessive hand-washing, checking or re-checking, or intrusive thoughts?', 'Yes, a great deal') in selected_choices:
+               disorders_q_scores['ocd']['score'] += 2
+
+           elif ('Over the past two weeks, have you engaged in repetitive behaviors or mental acts to reduce anxiety or distress?', 'Yes, a great deal') in selected_choices or ('Over the past two weeks, have you engaged in any obsessive or compulsive behaviors that interfere with your daily activities or cause significant distress, such as excessive hand-washing, checking or re-checking, or intrusive thoughts?', 'Yes, a great deal') in selected_choices:
+               disorders_q_scores['ocd']['score'] += 1
+           
+           if ('Over the past two weeks, how often have you felt worried or anxious about social situations? ', 'Nearly every day') in selected_choices and ('Over the past two weeks, have you avoided situations or activities because of fear or anxiety?', 'Yes, completely') in selected_choices:
+               disorders_q_scores['social_anxiety']['score'] += 2
+
+           elif ('Over the past two weeks, how often have you felt worried or anxious about social situations? ', 'Nearly every day') in selected_choices or ('Over the past two weeks, have you avoided situations or activities because of fear or anxiety?', 'Yes, completely') in selected_choices:
+               disorders_q_scores['social_anxiety']['score'] += 1
+           
+           if ('Over the past two weeks, have you experienced any sudden or extreme changes in mood or energy levels? ', 'Yes, a great deal') in selected_choices:
+               disorders_q_scores['bipolar']['score'] += 1
+           
+           if ('Over the past two weeks, have you disregarded or violated the rights of others, such as lying, stealing, or engaging in physical fights? ', 'Yes, a great deal') in selected_choices and ('Have you ever manipulated or conned others for personal gain, or acted in ways that are dishonest or deceitful?', 'Yes, a great deal') in selected_choices:
+              disorders_q_scores['anti_social']['score'] += 2
+
+           elif ('Over the past two weeks, have you disregarded or violated the rights of others, such as lying, stealing, or engaging in physical fights? ', 'Yes, a great deal') in selected_choices or ('Have you ever manipulated or conned others for personal gain, or acted in ways that are dishonest or deceitful?', 'Yes, a great deal') in selected_choices:
+              disorders_q_scores['anti_social']['score'] += 1
+
+           # use max to find the disorder with the highest score
+           # direct user to the specific questions of the disorder with the highest score
+           disorder = max(disorders_q_scores, key=lambda k: disorders_q_scores[k]['score']) 
+           
+           if disorder == "social_anxiety":
+            return redirect('/test/') 
+
+           elif disorder =="depression":
+            return redirect('/depression_test/')
+           
+           elif disorder =="gen_anxiety":
+            return redirect('/anxiety_test/')
+           
+           elif disorder =="ptsd":
+            return redirect('/ptsd_test/')
+           
+           elif disorder =="ocd":
+            return redirect('/ocd_test/')
+           
+           elif disorder =="anti_social":
+            return redirect('/antisocial_test/')
+           
+           elif disorder =="bipolar":
+            return redirect('/bipolar_test/')
+
+           
+           else:
+                # temp
+                message = "It doesnt seem that you suffer from  significant psychological distress"
+                context = {
+                    'message': message
+                }
+           return render(request, 'Screening_pgs/ghq_result.html', context)
+        
         
     else:
         form = GHQ12Form()
@@ -286,14 +523,31 @@ def delete_all_objs(self):
 # this function returns to the user the result once the form is submitted
 # user input along with the system rules will be used to reach the conclusion
 def results_view (request):
-
-    #questions = Question.objects.all()
-    #question_choices = Choice.objects.all()
-    #
-    #context : {
-    #    'questions': questions,
-    #    'choices': question_choices
-    #}
     
-    return render(request, "Screening_pgs/prediction_result.html", context) 
+    return render(request, "Screening_pgs/new_results.html", context) 
  
+ #score = calculate_ghq12_score()
+           
+           #if score <= 11:
+           #    message = "Your score suggests that you are not currently experiencing significant psychological distress."
+           #    delete_all_objs(GHQ12Response)
+           #elif score <= 23:
+           #    message = "Your score suggests that you may be experiencing some psychological distress. We recommend that you seek further evaluation from a mental health professional."
+           #    delete_all_objs(GHQ12Response)
+           #else:
+           #    message = "Your score suggests that you are experiencing significant psychological distress. We strongly recommend that you seek further evaluation from a mental health professional."
+           #    delete_all_objs(GHQ12Response)
+
+    '''
+           print(selected_choices) # for testing purposes 
+            after submission show the disorder qs with the highest score and redirect user to disorder specific questions (eg. via button)
+            if user scores high in q1 and q2 --> depression
+            elif user scores high in q5 and q6 --> gen anxiety
+            elif user scores high in q7 --> ptsd
+            elif user scores high in q5 and q9 --> social anxiety
+            elif user scores high in q10 --> bipolar 
+            elif user scores high in q11 --> ocd
+            elif user scores high in q12  --> antisocial
+            if selected choice value is ==3 then score conuter increment
+           rint(selected_choices)
+        '''
