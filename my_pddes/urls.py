@@ -39,6 +39,7 @@ urlpatterns = [
     path('ocd_test/', ocd_view),
     path('antisocial_test/', antisocial_view),
     path('ptsd_test/', ptsd_page_view),
+    path('bipolar_test/', bipolar_view),
     #bipolar is left 
     
 
