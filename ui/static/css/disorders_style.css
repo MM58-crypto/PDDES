@@ -15,8 +15,17 @@ body {
   
   #questions-container {
     margin-bottom: 20px;
+    
   }
-  
+
+.form_stuff {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
   .form-group {
     margin-bottom: 20px;
   }

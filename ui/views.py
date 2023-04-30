@@ -26,7 +26,10 @@ def help_view(request):
     return render(request, "gen_webpages/help.html")
 
 def contact_view(request):
-
+    # make contact form work 
+    if request.method == "POST":
+        #do smth
+        print('temp line')
     return render(request, "gen_webpages/contact.html")
 
 @login_required(login_url='/accounts/login/')
