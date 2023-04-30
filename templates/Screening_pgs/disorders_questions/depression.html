@@ -13,11 +13,13 @@
 {% load crispy_forms_tags %} 
 
 <br>
-
-<h2> Depression Questions </h2>
+<center>
+  <h2> Depression Questions </h2>
 <br>
-<p style="color:white;"> Please answer the questions honestly </p>
-<fieldset>
+<h3> Please answer the questions honestly </h3>
+</center>
+
+<div class="form_stuff">
   <form method="POST">
 
     {% csrf_token %}
@@ -35,10 +37,23 @@
     </div>
     
   </form>
+</div>
+
  <br>
   
-  
-</fieldset>
+<style>
+  .form_stuff {
+border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+h3 {
+  color:white;
+}
+</style>
+
 
 
 {% endblock %}

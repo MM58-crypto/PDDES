@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+
+
+
+{% block content %}
+
+{% load static %}
+
+<head>
+  <link rel="stylesheet" href="{% static 'css/disorders_style.css' %}">
+</head>
+{% load crispy_forms_tags %} 
+
+<br>
+<center>
+  <h2> Bipolar  Questions </h2>
+<br>
+<h3> Please answer the questions honestly </h3>
+</center>
+
+<div class="form_stuff">
+    <form method="POST">
+
+    {% csrf_token %}
+    <div id="questions-container">
+      <br> 
+        {{ bipolar_form|crispy}}
+    </div>
+    <br>
+    <div id="buttons-container">
+      <!--
+      <button type="button" id="back-button" disabled>Back</button>
+      <button type="button" id="next-button">Next</button> -->
+      
+      <button type="submit" id="submit-button" >Submit</button>
+    </div>
+    
+  </form>
+</div>
+
+ <br>
+
+  <style>
+    .form_stuff {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+h3 {
+  color:white;
+  
+}
+  </style>
+
+
+
+{% endblock %}

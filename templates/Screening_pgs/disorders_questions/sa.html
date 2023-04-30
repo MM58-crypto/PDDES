@@ -14,11 +14,13 @@
 {% load crispy_forms_tags %} 
 
 <br>
-
-<h2> Social Anxiety Questions </h2>
+<center>
+  <h2> Social Anxiety Questions </h2>
 <br>
-<p> Please answer the questions honestly </p>
-<fieldset>
+<h3> Please answer the questions honestly </h3>
+</center>
+
+<div class="form_stuff">
   <form method="POST">
 
     {% csrf_token %}
@@ -36,10 +38,12 @@
     </div>
     
   </form>
+</div>
+
  <br>
   
   
-</fieldset>
+
 
 <style>
   body {
@@ -47,15 +51,22 @@
     font-size: 16px;
   }
   
+.form_stuff {
+  border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
   h2 {
     margin-top: 20px;
     margin-bottom: 20px;
+   
+  }
+  h3 {
+    color:white;
   }
   
-  fieldset {
-    border: 1px solid #ccc;
-    padding: 20px;
-  }
   
   #questions-container {
     margin-bottom: 20px;

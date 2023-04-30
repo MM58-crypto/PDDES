@@ -12,12 +12,14 @@
 {% load crispy_forms_tags %} 
 
 <br>
-
-<h2> PTSD Questions </h2>
+<center>
+  <h2> Post Traumatic Stress Disorder Questions </h2>
 <br>
-<p> Please answer the questions honestly </p>
-<fieldset>
-  <form method="POST">
+<h3> Please answer the questions honestly </h3>
+</center>
+
+<div class="form_stuff">
+    <form method="POST">
 
     {% csrf_token %}
     <div id="questions-container">
@@ -36,8 +38,10 @@
   </form>
  <br>
   
+</div>
+
   
-</fieldset>
+
 
 <style>
   body {
@@ -49,12 +53,23 @@
     margin-top: 20px;
     margin-bottom: 20px;
   }
-  
+  h3 {
+    color:white;
+  }
   fieldset {
     border: 1px solid #ccc;
     padding: 20px;
   }
-  
+
+.form_stuff {
+border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+
   #questions-container {
     margin-bottom: 20px;
   }

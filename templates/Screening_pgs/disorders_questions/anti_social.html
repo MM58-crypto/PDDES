@@ -13,11 +13,13 @@
 {% load crispy_forms_tags %} 
 
 <br>
+<center>
+  <h2> Anti Social Personality Disorder Questions </h2>
+  <br>
+  <h3> Please answer the questions honestly </h3>
+</center>
 
-<h2> Anti Social Personality Disorder Questions </h2>
-<br>
-<p> Please answer the questions honestly </p>
-<fieldset>
+<div class="form_stuff">
   <form method="POST">
 
     {% csrf_token %}
@@ -27,18 +29,29 @@
     </div>
     <br>
     <div id="buttons-container">
-      <!--
-      <button type="button" id="back-button" disabled>Back</button>
-      <button type="button" id="next-button">Next</button> -->
-      
+     
       <button type="submit" id="submit-button" >Submit</button>
     </div>
     
   </form>
+</div>
+  
  <br>
   
   
-</fieldset>
 
+
+<style>
+ .form_stuff {
+border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+h3 {
+  color:white;
+}
+</style>
 
 {% endblock %}

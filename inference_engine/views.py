@@ -5,7 +5,7 @@ from inference_engine.models import GHQ12Question, GHChoice
 from django.views import generic
 from .forms import  *
 # import all forms instead
-#from inference_engine.models import GHQ12Response
+
 
 from knowledge_base.models import Psych_D_symptoms, Disorder_Diagnosis
 import rules 
@@ -83,6 +83,7 @@ def d_test_view(request):
     }
     return render(request, "Screening_pgs/diagnosis_test.html", context)
 
+
 def  anxiety_page_view(request):
 
     gen_anxiety = {'score': 0, 'likelihood': '', 
@@ -130,6 +131,53 @@ def  anxiety_page_view(request):
     }
     return render(request,"Screening_pgs/disorders_questions/anxiety.html", context)
 
+def bipolar_view(request):
+    bipolar =  {'score': 0, 'likelihood': '', 
+    'description': Disorder_Diagnosis.objects.get(id=2)}
+
+    questions = {}
+    for question in Question.objects.all():
+        choices = {}
+        for choice in Choice.objects.filter(question=question):
+           
+            agreements = ['Yes', 'Frequently' ,'Agree', 'Always', 'True', 'I did lose interest', 'Yes i gained/lost a lot of weight ', 'Yes, Frequently', 'Yes i have stolen/hurt and I feel sorry about it.', 'Yes i have stolen/hurt', 'Yes, I have repeatedly performed such acts.' , 'Yes, I have']
+            sometimes = ['Sometimes', 'Occasionally', 'From time to time' , 'Such thoughts occur to me occasionally ', 'Not sure']
+            disagreements = ['No', 'Not really', 'Rarely', 'Never, always focused', 'Disagree', 'False', 'No, my weight did not drastically change', 'No, I havent ', 'No, I have not repeatedly performed such acts.', 'No, i dont experience distressing memories', 'I dont experience such thoughts or urges', 'No, I have not'
+            'I did not get exposed ']
+            if choice.choice_text in agreements:
+                choices[choice.choice_text]= 2
+            elif choice.choice_text in sometimes:
+                choices[choice.choice_text] = 1
+            elif choice.choice_text in disagreements:
+                choices[choice.choice_text] = 0
+    
+        questions[question.question_text] = choices
+    
+    if request.method=="POST":
+        form = bipolar_Form(request.POST)
+        
+        if form.is_valid():
+            selected_choices = form.get_selected_choices()
+
+            for question_text, choice_text in selected_choices:
+                
+                bipolar['score'] += questions[question_text][choice_text]
+
+           
+            #for disorder in disorders.values():
+            disorder_context = determine_disorder(bipolar) 
+            # Render results page for each disorder
+            template_name = "Screening_pgs/new_results.html"
+            return render(request, template_name, disorder_context)
+            
+    
+    form = bipolar_Form() 
+    context = {
+        'bipolar_form': form
+    }
+    return render(request,"Screening_pgs/disorders_questions/bipolar.html", context)
+
+
 def socialanxiety_page_view(request):
 
     social_anxiety =  {'score': 0, 'likelihood': '', 
@@ -156,8 +204,9 @@ def socialanxiety_page_view(request):
     
     if request.method=="POST":
         form = Social_Anxiety(request.POST)
-        selected_choices = form.get_selected_choices()
+        
         if form.is_valid():
+            selected_choices = form.get_selected_choices()
             for question_text, choice_text in selected_choices:
                 
                 social_anxiety['score'] += questions[question_text][choice_text]
@@ -274,7 +323,7 @@ def ocd_view(request):
 def antisocial_view(request):
 
     anti_social =  {'score': 0, 'likelihood': '', 
-   'description':Disorder_Diagnosis.objects.get(id=5)}
+   'description':Disorder_Diagnosis.objects.get(id=7)}
 
     questions = {}
     for question in Question.objects.all():
@@ -333,11 +382,13 @@ def ptsd_page_view(request):
             # eg: yes/agreements, no/disagreements, neutral/sometimes/not sure)
             # if the selected choice contains any of these assign score**
             agreements = ['Yes', 'Frequently' ,'Agree', 'Always', 'True', 'I did lose interest', 'Yes i gained/lost a lot of weight ', 'Yes, Frequently', 'Yes i have stolen/hurt and I feel sorry about it.', 'Yes i have stolen/hurt', 'Yes, I have repeatedly performed such acts.' , 'Yes, I have']
-            ptsd_options = ['Direct experience', 'Witnessing the event occuring to someone else ', ' Finding out that a close family member or close friend experienced the horrific event(s)',  'I did not get exposed']
+            ptsd_options = ['Direct experience', 'Witnessing the event occuring to someone else', 'Finding out that a close family member or close friend experienced the horrific event(s)']
             sometimes = ['Sometimes', 'Occasionally', 'From time to time' , 'Such thoughts occur to me occasionally ']
             disagreements = ['No', 'Not really', 'Rarely', 'Never, always focused', 'Disagree', 'False', 'No, my weight did not drastically change', 'No, I havent', 'No, I have not repeatedly performed such acts.', 'No, i dont experience distressing memories', 'I dont experience such thoughts or urges', 'No, I have not'
-            'I did not get exposed ']
-            if choice.choice_text in agreements and ptsd_options:
+            'I did not get exposed']
+            if choice.choice_text in agreements:
+                choices[choice.choice_text]= 2
+            elif choice.choice_text in ptsd_options:
                 choices[choice.choice_text]= 2
             elif choice.choice_text in sometimes:
                 choices[choice.choice_text] = 1
@@ -430,44 +481,44 @@ def ghq_view(request):
            # if choice in q1 == choice.choice_text
             # change it to be list compatible
             # this is if the user scores high or selects the extreme option from questions
-           if ('Over the past two weeks, how often have you felt down, depressed, or hopeless?', 'Nearly every day') in selected_choices and ('Over the past two weeks, have you lost interest or pleasure in activities you normally enjoy?', 'Yes, completely') in selected_choices and ('Over the past two weeks, have you experienced a noticeable decrease or increase in your appetite or weight?', 'Yes, a great deal') in selected_choices:
+           if ('1. Over the past two weeks, how often have you felt down, depressed, or hopeless?', 'Nearly every day') in selected_choices and ('2. Over the past two weeks, have you lost interest or pleasure in activities you normally enjoy?', 'Yes, completely') in selected_choices and ('3. Over the past two weeks, have you experienced a noticeable decrease or increase in your appetite or weight?', 'Yes, a great deal') in selected_choices:
              disorders_q_scores['depression']['score'] += 3
            # add elifs later
-           elif ('Over the past two weeks, how often have you felt down, depressed, or hopeless?', 'Nearly every day') in selected_choices or ('Over the past two weeks, have you lost interest or pleasure in activities you normally enjoy?', 'Yes, completely') in selected_choices or ('Over the past two weeks, have you experienced a noticeable decrease or increase in your appetite or weight?', 'Yes, a great deal') in selected_choices:
+           elif ('1. Over the past two weeks, how often have you felt down, depressed, or hopeless?', 'Nearly every day') in selected_choices or ('2. Over the past two weeks, have you lost interest or pleasure in activities you normally enjoy?', 'Yes, completely') in selected_choices or ('3. Over the past two weeks, have you experienced a noticeable decrease or increase in your appetite or weight?', 'Yes, a great deal') in selected_choices:
              disorders_q_scores['depression']['score'] += 1
             
 
-           if ('Over the past two weeks, how often have you felt nervous, anxious, or on edge?', 'Nearly every day') in selected_choices and ('Over the past two weeks, have you avoided situations or activities because of fear or anxiety? ', 'Yes, completely') in selected_choices:
+           if ('5. Over the past two weeks, how often have you felt nervous, anxious, or on edge?', 'Nearly every day') in selected_choices and ('6. Over the past two weeks, have you avoided situations or activities because of fear or anxiety?', 'Yes, completely') in selected_choices:
                disorders_q_scores['gen_anxiety']['score'] += 2
 
-           elif ('Over the past two weeks, how often have you felt nervous, anxious, or on edge?', 'Nearly every day') in selected_choices or ('Over the past two weeks, have you avoided situations or activities because of fear or anxiety? ', 'Yes, completely') in selected_choices:
+           elif ('5. Over the past two weeks, how often have you felt nervous, anxious, or on edge?', 'Nearly every day') in selected_choices or ('6. Over the past two weeks, have you avoided situations or activities because of fear or anxiety? ', 'Yes, completely') in selected_choices:
                disorders_q_scores['gen_anxiety']['score'] += 1
            
-           if (' Over the past two weeks, how often have you experienced intrusive, unwanted, or distressing thoughts? ', 'Almost every day') in selected_choices and ('Over the past two weeks, have you experienced any physical or emotional reactions when something reminded you of a traumatic event from your past, such as nightmares, flashbacks, intense feelings of distress, or physical sensations like sweating or trembling?', 'Yes, a great deal'):
+           if ('7. Over the past two weeks, how often have you experienced intrusive, unwanted, or distressing thoughts?', 'Almost every day') in selected_choices and ('14. Over the past two weeks, have you experienced any physical or emotional reactions when something reminded you of a traumatic event from your past, such as nightmares, flashbacks, intense feelings of distress, or physical sensations like sweating or trembling?', 'Yes, a great deal'):
                disorders_q_scores['ptsd']['score'] += 2
 
-           elif (' Over the past two weeks, how often have you experienced intrusive, unwanted, or distressing thoughts? ', 'Almost every day') in selected_choices or ('Over the past two weeks, have you experienced any physical or emotional reactions when something reminded you of a traumatic event from your past, such as nightmares, flashbacks, intense feelings of distress, or physical sensations like sweating or trembling?', 'Yes, a great deal'):
+           elif ('7. Over the past two weeks, how often have you experienced intrusive, unwanted, or distressing thoughts? ', 'Almost every day') in selected_choices or ('14. Over the past two weeks, have you experienced any physical or emotional reactions when something reminded you of a traumatic event from your past, such as nightmares, flashbacks, intense feelings of distress, or physical sensations like sweating or trembling?', 'Yes, a great deal'):
                disorders_q_scores['ptsd']['score'] += 1
            
-           if ('Over the past two weeks, have you engaged in repetitive behaviors or mental acts to reduce anxiety or distress?', 'Yes, a great deal') in selected_choices and ('Over the past two weeks, have you engaged in any obsessive or compulsive behaviors that interfere with your daily activities or cause significant distress, such as excessive hand-washing, checking or re-checking, or intrusive thoughts?', 'Yes, a great deal') in selected_choices:
+           if ('8. Over the past two weeks, have you engaged in repetitive behaviors or mental acts to reduce anxiety or distress?', 'Yes, a great deal') in selected_choices and ('11. Over the past two weeks, have you engaged in any obsessive or compulsive behaviors that interfere with your daily activities or cause significant distress, such as excessive hand-washing, checking or re-checking, or intrusive thoughts?', 'Yes, a great deal') in selected_choices:
                disorders_q_scores['ocd']['score'] += 2
 
-           elif ('Over the past two weeks, have you engaged in repetitive behaviors or mental acts to reduce anxiety or distress?', 'Yes, a great deal') in selected_choices or ('Over the past two weeks, have you engaged in any obsessive or compulsive behaviors that interfere with your daily activities or cause significant distress, such as excessive hand-washing, checking or re-checking, or intrusive thoughts?', 'Yes, a great deal') in selected_choices:
+           elif ('8. Over the past two weeks, have you engaged in repetitive behaviors or mental acts to reduce anxiety or distress?', 'Yes, a great deal') in selected_choices or ('11. Over the past two weeks, have you engaged in any obsessive or compulsive behaviors that interfere with your daily activities or cause significant distress, such as excessive hand-washing, checking or re-checking, or intrusive thoughts?', 'Yes, a great deal') in selected_choices:
                disorders_q_scores['ocd']['score'] += 1
            
-           if ('Over the past two weeks, how often have you felt worried or anxious about social situations? ', 'Nearly every day') in selected_choices and ('Over the past two weeks, have you avoided situations or activities because of fear or anxiety?', 'Yes, completely') in selected_choices:
+           if ('9. Over the past two weeks, how often have you felt worried or anxious about social situations? ', 'Nearly every day') in selected_choices and ('6. Over the past two weeks, have you avoided situations or activities because of fear or anxiety?', 'Yes, completely') in selected_choices:
                disorders_q_scores['social_anxiety']['score'] += 2
 
-           elif ('Over the past two weeks, how often have you felt worried or anxious about social situations? ', 'Nearly every day') in selected_choices or ('Over the past two weeks, have you avoided situations or activities because of fear or anxiety?', 'Yes, completely') in selected_choices:
+           elif ('9. Over the past two weeks, how often have you felt worried or anxious about social situations? ', 'Nearly every day') in selected_choices or ('6. Over the past two weeks, have you avoided situations or activities because of fear or anxiety?', 'Yes, completely') in selected_choices:
                disorders_q_scores['social_anxiety']['score'] += 1
            
-           if ('Over the past two weeks, have you experienced any sudden or extreme changes in mood or energy levels? ', 'Yes, a great deal') in selected_choices:
+           if ('10. Over the past two weeks, have you experienced any sudden or extreme changes in mood or energy levels? ', 'Yes, a great deal') in selected_choices:
                disorders_q_scores['bipolar']['score'] += 1
            
-           if ('Over the past two weeks, have you disregarded or violated the rights of others, such as lying, stealing, or engaging in physical fights? ', 'Yes, a great deal') in selected_choices and ('Have you ever manipulated or conned others for personal gain, or acted in ways that are dishonest or deceitful?', 'Yes, a great deal') in selected_choices:
+           if ('12. Over the past two weeks, have you disregarded or violated the rights of others, such as lying, stealing, or engaging in physical fights? ', 'Yes, a great deal') in selected_choices and ('13. Have you ever manipulated or conned others for personal gain, or acted in ways that are dishonest or deceitful?', 'Yes, a great deal') in selected_choices:
               disorders_q_scores['anti_social']['score'] += 2
 
-           elif ('Over the past two weeks, have you disregarded or violated the rights of others, such as lying, stealing, or engaging in physical fights? ', 'Yes, a great deal') in selected_choices or ('Have you ever manipulated or conned others for personal gain, or acted in ways that are dishonest or deceitful?', 'Yes, a great deal') in selected_choices:
+           elif ('12. Over the past two weeks, have you disregarded or violated the rights of others, such as lying, stealing, or engaging in physical fights? ', 'Yes, a great deal') in selected_choices or ('13. Have you ever manipulated or conned others for personal gain, or acted in ways that are dishonest or deceitful?', 'Yes, a great deal') in selected_choices:
               disorders_q_scores['anti_social']['score'] += 1
 
            # use max to find the disorder with the highest score
@@ -495,7 +546,6 @@ def ghq_view(request):
            elif disorder =="bipolar":
             return redirect('/bipolar_test/')
 
-           
            else:
                 # temp
                 message = "It doesnt seem that you suffer from  significant psychological distress"
@@ -527,16 +577,7 @@ def results_view (request):
     return render(request, "Screening_pgs/new_results.html", context) 
  
  #score = calculate_ghq12_score()
-           
-           #if score <= 11:
-           #    message = "Your score suggests that you are not currently experiencing significant psychological distress."
-           #    delete_all_objs(GHQ12Response)
-           #elif score <= 23:
-           #    message = "Your score suggests that you may be experiencing some psychological distress. We recommend that you seek further evaluation from a mental health professional."
-           #    delete_all_objs(GHQ12Response)
-           #else:
-           #    message = "Your score suggests that you are experiencing significant psychological distress. We strongly recommend that you seek further evaluation from a mental health professional."
-           #    delete_all_objs(GHQ12Response)
+
 
     '''
            print(selected_choices) # for testing purposes 

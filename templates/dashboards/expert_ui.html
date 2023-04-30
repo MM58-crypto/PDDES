@@ -7,23 +7,69 @@
 
 <head>
     <title>Expert System</title>
-    <link rel="stylesheet" href="{% static 'css/expert_ui.css' %}">
+    <!--<link rel="stylesheet" href="{% static 'css/expert_ui.css' %}"> -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script>
+      const disclaimer_modal = new boostrap.Modal('#disclaimer-modal');
+      
+      window.addEventListener('DOMContentLoaded', () => {
+        disclaimer_modal.show();
+      });
+  
+     </script>
+     
     
   </head>
+  <div class="modal" tabindex="-1" role="dialog" id="disclaimer-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Disclaimer</h5>
+       
+      </div>
+      <div class="modal-body">
+        <p id="modal-p">This system is essentially a support tool. It is not
+          meant to replace mental health professionals in any way, shape or form. 
+          It only facilitates the process for experts and normal users  
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+  const dialog = document.getElementById('disclaimer-modal');
+  const closebtn = document.querySelector('.modal-footer .btn-danger');
+
+  function showDialog() {
+    dialog.style.display = 'block';
+  }
+
+  function hideDialog() {
+    dialog.style.display = 'none';
+  }
+
+  closebtn.addEventListener('click', hideDialog);
+  
+  </script>
+  <script>
+    showDialog();
+  </script>
+ 
   <body>
     <br>
     <h1 style="color:white"><center>Expert User Interface <i class="fa fa-user-md" aria-hidden="true"></i></center></h1> 
     <div class="expert-interface">
         <br>
-
         <div>
 
-        
         </div>
-        <br>
-        
+        <br> 
         <section class="knowledge_base">
           <h2> Knowledge Base Interface <i class="bi bi-database-fill"></i></i> </h2>
           <p style="color:white">
@@ -36,13 +82,14 @@
           <p style="color:white">
             Click on the button below to access the knowledge base interface 
 
-          </p>\
+          </p>
           <br>
           <a href="{% url 'kb-interface' 1 %}"><button type="button" class="btn btn-info">Knowledge Base UI</button></a>
         </section>
 <br>
         <section id="disorder_tests">
-          <h2> Disorder Tests <i class="bi bi-clipboard2-pulse"></i> </h2>
+        <div class="disorder_ti">
+          <center> <h2> Disorder Tests <i class="bi bi-clipboard2-pulse"></i> </h2></center> 
           <p style="color:white">
             Below are all the tests avaiable in the system. If you have an idea what your patient
             or client is suffering from you select from the tests below. All the questions and diagnosis criteria
@@ -54,6 +101,9 @@
             (This system offers assessments only for Social Anxiety, Generalized Anxiety Disorder, Bipolar, PTSD, OCD, Anti social and Depression.)
           </p>
           <br>
+        </div>
+        <br>
+        <br>
           <!-- maybe add pictures later-->
           <div class="social_anxiety" >
             <h3> Social Anxiety</h3>
@@ -78,7 +128,6 @@
           <div class="depression">
             <h3> Depression </h3>
             <p> 
-                  
             </p>
             <br>
             <center><a href="/depression_test"> <button class="begin-button">Begin</button></a></center>
@@ -123,7 +172,7 @@
                 
             </p>
             <!-- add the bipolar questions asap -->
-           <center><a href="/"> <button class="begin-button">Begin</button></a></center>
+           <center><a href="/bipolar_test"> <button class="begin-button">Begin</button></a></center>
           </div>
           
           <br>
@@ -158,6 +207,171 @@
           </div>
         </footer> 
       
+        
   </body>
+<style>
 
+body {
+    margin: 0;
+    font-family: sans-serif;
+  
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+ a {
+  text-decoration: none;
+ }
+ .disorder_ti {
+  border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    color:white;
+   
+ }
+  /* navigation bar */
+  .navigation {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+  }
+  .depression, .social_anxiety, .general_anxiety, .ocd, .bipolar, .anti-social, .ptsd {
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    color:white;
+   
+  }
+  .disorder_tests {
+    color:white;
+    
+  }
+  h3 {
+    text-align: center;
+    color: white;
+  }
+ 
+  .begin-button {
+    font-size: 16px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4400ff;
+    color: #fff;
+    cursor: pointer;
+    align-items: center;
+  }
+  .knowledge_base {
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    color:white;
+  }
+  #modal-p {
+  color:black;
+ }
+ .modal-content {
+  background:darkgray;
+ }
+#dialog {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+    border: solid white  5px;
+}
+  .begin-button:hover {
+    background-color: #0069d9;
+  }
+  
+  .navigation ul {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .navigation li {
+    margin-right: 20px;
+  }
+  
+  .navigation a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+  }
+  
+  .navigation a:hover {
+    text-decoration: underline;
+  }
+  
+ 
+ 
+  
+  .form-field {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: white;
+  }
+
+  input[type="text"],
+  select,
+  textarea {
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  input[type="submit"] {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  input[type="submit"]:hover {
+    background-color: #444;
+  }
+  
+  /* patient history table */
+  #patient-history {
+    padding: 20px;
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  th,
+  td {
+    border: 1px solid #ccc;
+    text-align: left;
+    padding: 10px;
+    color:white;
+  }
+  
+  th {
+    background-color: #333;
+    color: #fff;
+  }
+  
+</style>
 {% endblock %}

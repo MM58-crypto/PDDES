@@ -37,7 +37,7 @@ class Anxiety_Form(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         
-        for question in Question.objects.all()[6:11]: 
+        for question in Question.objects.all()[5:11]: 
             choices = [(choice.id, choice.choice_text) for choice in question.choice_set.all()]
             self.fields[str(question.id)] = forms.ChoiceField(choices=choices, widget=forms.RadioSelect, label=question.question_text)
 
@@ -68,23 +68,23 @@ class Depression_Form(forms.Form):
             selected_choices.append((question.question_text, selected_choice.choice_text))
         return selected_choices
 
-#class bipolar_Form(forms.Form):
-#    
-#    def __init__(self, *args, **kwargs):
-#        super().__init__(*args, **kwargs)
-#        
-#        for question in Question.objects.all()[0:5]: 
-#            choices = [(choice.id, choice.choice_text) for choice in question.choice_set.all()]
-#            self.fields[str(question.id)] = forms.ChoiceField(choices=choices, widget=forms.RadioSelect, label=question.question_text)
-#
-#    def get_selected_choices(self):
-#        selected_choices = []
-#        # change from field_value to choice text
-#        for field_name, field_value in self.cleaned_data.items():
-#            question = Question.objects.get(id=int(field_name))
-#            selected_choice = Choice.objects.get(id=int(field_value))
-#            selected_choices.append((question.question_text, selected_choice.choice_text))
-#        return selected_choices
+class bipolar_Form(forms.Form):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        for question in Question.objects.all()[35:42]: 
+            choices = [(choice.id, choice.choice_text) for choice in question.choice_set.all()]
+            self.fields[str(question.id)] = forms.ChoiceField(choices=choices, widget=forms.RadioSelect, label=question.question_text)
+
+    def get_selected_choices(self):
+        selected_choices = []
+        # change from field_value to choice text
+        for field_name, field_value in self.cleaned_data.items():
+            question = Question.objects.get(id=int(field_name))
+            selected_choice = Choice.objects.get(id=int(field_value))
+            selected_choices.append((question.question_text, selected_choice.choice_text))
+        return selected_choices
 
 class Antisocial_Form(forms.Form):
     

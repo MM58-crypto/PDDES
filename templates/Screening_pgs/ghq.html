@@ -7,14 +7,12 @@
 
 {% load crispy_forms_tags %} 
 
-<h2> General screening  </h2>
-<br>
-<fieldset>
+<center> <h2> General screening  </h2> </center>
 
-  <p>
-    
-  </p>
-  <form method="POST">
+<br>
+
+  <div class="form_stuff">
+      <form method="POST">
     {% csrf_token %}
 
     <div class="ghq12">
@@ -32,8 +30,9 @@
   
 
 </form>
+  </div>
 
-</fieldset>
+
 
 <style>
      body {
@@ -41,6 +40,13 @@
     font-size: 16px;
   }
   
+  .form_stuff {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
   h2 {
     margin-top: 20px;
     margin-bottom: 20px;
