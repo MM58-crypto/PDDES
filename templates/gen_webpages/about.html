@@ -6,39 +6,138 @@
 {% load static %}
 <br>
   <head>
-    <link rel="stylesheet" href="{% static 'css/about.css'%}">
+    <link rel="stylesheet" href="{% static 'css/about.css' %}">
   </head>
     
+<div class="heading">
+    <h1>About PDDES</h1>
+    <p> PDDES short for Psychological Disorders Diagnosis Expert System</p>
 
-    <br>
- <section class="about-site">
-  <div class="main">
-    <img class="img-fluid w-50 d-none d-sm-block" src="{% static 'imgs/undraw_programming_re_kg9v.svg'%}" alt="">
-    <div class="about-text">
-    
-      <h5>About PDDES </h5>
-      <p>
-        <!-- About the site itself -->
-        Greetings, welcome to PDDES (short for Psychological Disorders Diagnosis Expert System),
-        An online expert system for diagnosing/predicting psychological disorders. 
-        This online system was built using html, css, javascript and django. Since it is an expert system, it is composed of three main
-        components: an inference engine, a knowledge base and of course a user interface. Moreover, this system aims to assist those might be
-        suffering from psychological issues as well as experts in the domain of psychology/psychiatry to facilitate the diagnosis process.
-      
-        Not to mention, other than to help or atleast slightly
-        guide those who are struggling with psychological issues, this website serves as my final year project. 
-         
-       
-      </p>
-
+</div>
+ <div class="container">
+  <section class="about">
+    <div class="about-image">
+      <img src="{% static 'imgs/undraw_programming_re_kg9v.svg' %}" alt="">
     </div>
-  </div>
- </section>
- <br>
+    <div class="about-content">
+      Greetings, welcome to PDDES (short for Psychological Disorders Diagnosis Expert System),
+      An online expert system for diagnosing/predicting psychological disorders. 
+      This online system was built using html, css, javascript and django. Since it is an expert system, it is composed of three main
+      components: an inference engine, a knowledge base and of course a user interface. Moreover, this system aims to assist those might be
+      suffering from psychological issues as well as experts in the domain of psychology/psychiatry to facilitate the diagnosis process.
+     
+      Not to mention, other than to help or atleast slightly
+      guide those who are struggling with psychological issues, this website serves as my final year project. 
+    </div>
+  </section>
+ </div>
+  <!--
+     
 
- <section class="about-me">
-  
- </section>
-   
+  -->
+<style>
+* {
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto';
+  box-sizing: border-box;
+}
+.heading {
+  width: 90%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  margin: 20px auto;
+}
+.heading h1 {
+  font-size: 50px;
+  margin-bottom: 25px;
+  position: relative;
+}
+.heading h1::after {
+  content:"";
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  display: block;
+  margin: 0 auto;
+  background-color: purple;
+}
+heading p {
+  font-size: 18px;
+  color:white;
+  margin-bottom: 35px;
+}
+.container {
+  width: 90%;
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+.about {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+}
+.about-image  {
+  flex: 1;
+  margin-right: 40px;
+  overflow: hidden;
+}
+.about-image img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  transition: 0.5s ease;
+}
+.about-content {
+  flex:1;
+
+}
+.about-content  p {
+  font-size: 18px;
+  line-height: 1.5;
+}
+.about-content {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 19px;
+  border-radius: 25px;
+  margin-top: 15px;
+  transition: 0.3s ease; 
+}
+@media screen and (max-width: 768px) {
+  .heading {
+    padding: 0px 20px;
+
+  }
+  .heading h1 {
+    font-size: 36px;
+  }
+  .heading p {
+    font-size: 17px;
+    margin-bottom: 0px;
+  }
+  .container {
+    padding: 0px
+  }
+  .about {
+    padding: 20px;
+    flex-direction: column;
+  }
+  .about-image {
+    margin-right: 0px;
+    margin-bottom: 20px;
+
+  }
+  .about-content p {
+      padding: 0px;
+      font-size: 16px;
+  }
+}
+</style>
 
 {% endblock %}
