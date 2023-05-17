@@ -1,5 +1,5 @@
 # mm-s-fyp
-(work in progress) final year project 
+final year project 
 
 An expert system for 'diagnosing' psychological disorders. 
 Built using python (Django framework) for backend and HTML + CSS + Javascript for the frontend.
