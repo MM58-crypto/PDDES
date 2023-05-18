@@ -8,7 +8,7 @@ Built using python (Django framework) for backend and HTML + CSS + Javascript fo
 Only diagnoses or predicts 7 disorders.
 Uses rule-based approach along with backward chaining in reaching the conclusion.
 
-## Main Features: - 
+## Main Features: 
 - User-friendly interface designed for both experts and general users.
 - Comprehensive psychological disorder questionnaires/tests available for seven disorders: social anxiety, generalized anxiety disorder, OCD, PTSD, bipolar disorder, and antisocial personality disorder.
 - General assessment tool provided for normal users to determine a specific disorder, guiding them to specific disorder-related questions based on their responses.
