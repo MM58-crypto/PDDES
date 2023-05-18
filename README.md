@@ -2,7 +2,7 @@
 (Final Year Project) 
 
 ## Brief description:
-An expert system for 'diagnosing' psychological disorders. The system uses data from the knowledge base as well as user responses to provide user with appropriate conclusion/diagnosis. System can be used by both experts(i.e. mental health professionals) and normal users. It is important to note that this system is not intended to replace or take over experts. It also helps those who can't afford to book a therapy session or live in places far away from mental clinics. The questions used are based on the DSM (Diagnostic and Statistical Manual of Mental Disorders  diagnosis) criteria. 
+A comprehensive expert system designed to assist in the assessment of psychological disorders. This system utilizes a knowledge base and user responses to generate appropriate conclusions or diagnoses. It caters to both mental health professionals and general users. It is crucial to emphasize that this system is not intended to substitute or replace experts, but rather to provide valuable support. Additionally, it benefits individuals who may face financial constraints or lack access to nearby mental health clinics. The diagnostic questions employed in the system adhere to the criteria outlined in the DSM (Diagnostic and Statistical Manual of Mental Disorders)
 
 Built using python (Django framework) for backend and HTML + CSS + Javascript for the frontend.
 Only diagnoses or predicts 7 disorders.
