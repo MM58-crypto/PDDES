@@ -8,12 +8,12 @@ Only diagnoses or predicts 7 disorders.
 Uses rule-based approach along with backward chaining in reaching the conclusion.
 
 Main Features: - 
--> User-friendly interface designed for both experts and general users.
--> Comprehensive psychological disorder questionnaires/tests available for seven disorders: social anxiety, generalized anxiety disorder, OCD, PTSD, bipolar disorder, and antisocial personality disorder.
--> General assessment tool provided for normal users to determine a specific disorder, guiding them to specific disorder-related questions based on their responses.
--> Knowledge base interface accessible to experts, allowing them to modify or view disorder data in the database.
--> Individual disorder tests exclusively accessible to experts.
--> Integration of the Google Maps API, enabling users who obtain high scores on the tests to locate nearby mental health clinics using GPS functionality toggled by the user.
+- User-friendly interface designed for both experts and general users.
+- Comprehensive psychological disorder questionnaires/tests available for seven disorders: social anxiety, generalized anxiety disorder, OCD, PTSD, bipolar disorder, and antisocial personality disorder.
+- General assessment tool provided for normal users to determine a specific disorder, guiding them to specific disorder-related questions based on their responses.
+- Knowledge base interface accessible to experts, allowing them to modify or view disorder data in the database.
+- Individual disorder tests exclusively accessible to experts.
+- Integration of the Google Maps API, enabling users who obtain high scores on the tests to locate nearby mental health clinics using GPS functionality toggled by the user.
 
 
 
