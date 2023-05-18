@@ -1,4 +1,4 @@
-# mm-s-fyp
+# PDDES [Psychlogical Disorders Diagnosis Expert System] 
 (Final Year Project) 
 Brief description:
 An expert system for 'diagnosing' psychological disorders. The system uses data from the knowledge base as well as user responses to provide user with appropriate conclusion/diagnosis. System can be used by both experts(i.e. mental health professionals) and normal users. It is important to note that this system is not intended to replace or take over experts, rather it can be looked at as a decision support system that facilitates the process for experts. It also helps those who can't afford to book a therapy session or live in places far away from mental clinics. The questions used are based on the DSM (Diagnostic and Statistical Manual of Mental Disorders  diagnosis) criteria. 
