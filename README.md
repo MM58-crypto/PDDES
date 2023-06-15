@@ -21,9 +21,11 @@ Uses rule-based approach along with backward chaining in reaching the conclusion
 - Integration of the Google Maps API, enabling users who obtain high scores on the tests to locate nearby mental health clinics using GPS functionality toggled by the user.
 
 ## Limitations: 
- - The system is only providing results related to 7 disorders. Due to the great number of psychological disorders out there (approx. 300), it is quite challenging to include details/data about each one
- - An obvious limitation is the fact that the system can not operate without internet .
- - 
+- The system is only providing results related to 7 disorders. Due to the great number of psychological disorders out there (approx. 300), it is quite challenging to include details/data about each one. 
+- An obvious limitation is the fact that the system can not operate without internet .
+## Future upgrades:
+- Using a machine learning model instead of a rule based approach to improve accuracy
+- Integrate a chatbot 
 
 
 
