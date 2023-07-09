@@ -29,6 +29,10 @@ Uses rule-based approach along with backward chaining in reaching the conclusion
 
 ## Usage (Coming soon)
 
-https://github.com/MM58-crypto/PDDES/assets/62597737/f2dde393-ec9a-4654-a37a-786b7816aacc
+
+
+https://github.com/MM58-crypto/PDDES/assets/62597737/e9f94161-ff57-4c46-9e7d-a04c2611372b
+
+
 
 
