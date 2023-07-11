@@ -27,12 +27,13 @@ Uses rule-based approach along with backward chaining in reaching the conclusion
 - Using a machine learning model instead of a rule based approach to improve accuracy
 - Integrate a chatbot 
 
-## Usage 
+## Demo
 
 
 
 https://github.com/MM58-crypto/PDDES/assets/62597737/e9f94161-ff57-4c46-9e7d-a04c2611372b
 
+## Usage (coming soon)
 
 
 
