@@ -28,7 +28,7 @@ Uses rule-based approach along with backward chaining in reaching the conclusion
 - An obvious limitation is the fact that the system can not operate without internet .
 ## Future upgrades:
 - Using a machine learning model instead of a rule based approach to improve accuracy
-- Integrate a chatbot 
+- Integratation of a chatbot 
 
 
 
