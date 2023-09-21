@@ -32,7 +32,7 @@ Uses rule-based approach along with backward chaining in reaching the conclusion
 
 
 
-## Usage (coming soon)
+## Usage 
 
 
 
