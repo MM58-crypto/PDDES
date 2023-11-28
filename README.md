@@ -5,7 +5,6 @@
 A comprehensive expert system designed to assist in the assessment of psychological disorders. This system utilizes a knowledge base and user responses to generate appropriate conclusions or diagnoses. It caters to both mental health professionals and general users. 
 Additionally, it benefits individuals who may face financial constraints or lack access to nearby mental health clinics. The diagnostic questions employed in the system adhere to the criteria outlined in the DSM (Diagnostic and Statistical Manual of Mental Disorders)
 
-## Demo
 
 
 ## It is crucial to emphasize that this system is not intended to substitute or replace experts, but rather to provide valuable support.
